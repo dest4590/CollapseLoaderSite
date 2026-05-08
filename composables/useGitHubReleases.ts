@@ -86,8 +86,11 @@ export function useGitHubReleases(repoUrl: string) {
     async function fetchLatestRelease(): Promise<void> {
         latestReleaseLoaded.value = false;
         try {
-            const data: GitHubRelease = await fetchJSON(`${repoUrl}/releases/latest`);
-            latestReleaseUrl.value = data?.assets?.[0]?.browser_download_url ?? '';
+            const data: GitHubRelease = await fetchJSON(
+                `${repoUrl}/releases/latest`,
+            );
+            latestReleaseUrl.value =
+                data?.assets?.[0]?.browser_download_url ?? '';
             const linux = pickLinuxAssets(data?.assets);
             latestLinuxAppImageUrl.value = linux.appImage;
             latestLinuxDebUrl.value = linux.deb;
@@ -106,11 +109,14 @@ export function useGitHubReleases(repoUrl: string) {
     async function fetchLatestPrerelease(): Promise<void> {
         latestPrereleaseLoaded.value = false;
         try {
-            const data: GitHubRelease[] = await fetchJSON(`${repoUrl}/releases`);
+            const data: GitHubRelease[] = await fetchJSON(
+                `${repoUrl}/releases`,
+            );
             const latestPrerelease = Array.isArray(data)
                 ? data.find((release) => release.prerelease)
                 : null;
-            latestPrereleaseUrl.value = latestPrerelease?.assets?.[0]?.browser_download_url ?? '';
+            latestPrereleaseUrl.value =
+                latestPrerelease?.assets?.[0]?.browser_download_url ?? '';
             const linux = pickLinuxAssets(latestPrerelease?.assets);
             latestPreLinuxAppImageUrl.value = linux.appImage;
             latestPreLinuxDebUrl.value = linux.deb;
@@ -127,10 +133,7 @@ export function useGitHubReleases(repoUrl: string) {
     }
 
     onMounted(async () => {
-        await Promise.all([
-            fetchLatestRelease(),
-            fetchLatestPrerelease()
-        ]);
+        await Promise.all([fetchLatestRelease(), fetchLatestPrerelease()]);
     });
 
     return {
@@ -149,6 +152,7 @@ export function useGitHubReleases(repoUrl: string) {
         latestPreWindowsMsiUrl,
         latestPreWindowsSetupUrl,
         error,
-        refetch: () => Promise.all([fetchLatestRelease(), fetchLatestPrerelease()])
+        refetch: () =>
+            Promise.all([fetchLatestRelease(), fetchLatestPrerelease()]),
     };
 }

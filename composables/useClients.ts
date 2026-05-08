@@ -23,22 +23,45 @@ export default function useClients() {
         loading.value = true;
         try {
             const [allData, fabricData, forgeData] = await Promise.all([
-                $fetch<{ success: boolean; data: any }>(
-                    'https://atlas.collapseloader.org/api/v1/clients',
+                $fetch(
+                    'https://huggingface.co/datasets/Collapsecdn/collapsecdn/resolve/main/static/clients.json',
                 ),
-                $fetch<{ success: boolean; data: any }>(
-                    'https://atlas.collapseloader.org/api/v1/fabric-clients',
+                $fetch(
+                    'https://huggingface.co/datasets/Collapsecdn/collapsecdn/resolve/main/static/fabric-clients.json',
                 ),
-                $fetch<{ success: boolean; data: any }>(
-                    'https://atlas.collapseloader.org/api/v1/forge-clients',
+                $fetch(
+                    'https://huggingface.co/datasets/Collapsecdn/collapsecdn/resolve/main/static/forge-clients.json',
                 ),
             ]);
 
-            const rawAll = Array.isArray(allData?.data) ? allData.data : [];
-            fabric.value = Array.isArray(fabricData?.data)
-                ? fabricData.data
-                : [];
-            forge.value = Array.isArray(forgeData?.data) ? forgeData.data : [];
+            console.log('Fetched clients data:', {
+                allData,
+                fabricData,
+                forgeData,
+            });
+
+            const tryParse = (d: any) => {
+                if (Array.isArray(d)) return d;
+                if (d == null) return [];
+                if (typeof d === 'string') {
+                    try {
+                        const parsed = JSON.parse(d);
+                        return Array.isArray(parsed)
+                            ? parsed
+                            : Array.isArray(parsed?.data)
+                              ? parsed.data
+                              : [];
+                    } catch (e) {
+                        return [];
+                    }
+                }
+                if (Array.isArray(d?.data)) return d.data;
+                return [];
+            };
+
+            const rawAll = tryParse(allData);
+            fabric.value = tryParse(fabricData) as any;
+            forge.value = tryParse(forgeData) as any;
 
             const map = new Map<string | number, any>();
             rawAll.forEach((c: any) => map.set(c.id, c));

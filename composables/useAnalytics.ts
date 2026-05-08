@@ -1,4 +1,4 @@
-import { onMounted, ref, onUnmounted } from "vue";
+import { ref } from 'vue';
 
 interface Analytics {
     total_loader_launches: number;
@@ -23,11 +23,13 @@ export function useAnalytics() {
         }
     }
 
-    let intervalId: number | undefined;
+    // let intervalId: number | undefined;
 
     async function refetch() {
         try {
-            const data: Analytics = await fetchJSON('https://atlas.collapseloader.org/api/v1/statistics');
+            const data: Analytics = await fetchJSON(
+                'https://atlas.collapseloader.org/api/v1/statistics',
+            );
             if (data) {
                 totalLoaderLaunches.value = data.total_loader_launches;
                 totalClientLaunches.value = data.total_client_launches;
@@ -40,16 +42,16 @@ export function useAnalytics() {
         }
     }
 
-    onMounted(() => {
-        refetch();
-        intervalId = window.setInterval(refetch, 15000);
-    });
+    // onMounted(() => {
+    //     refetch();
+    //     intervalId = window.setInterval(refetch, 15000);
+    // });
 
-    onUnmounted(() => {
-        if (intervalId) {
-            clearInterval(intervalId);
-        }
-    });
+    // onUnmounted(() => {
+    //     if (intervalId) {
+    //         clearInterval(intervalId);
+    //     }
+    // });
 
     return {
         totalLoaderLaunches,
