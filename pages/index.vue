@@ -47,6 +47,11 @@ const isWindows = computed(() => {
     if (import.meta.server) return false;
     return /windows/i.test(navigator.userAgent);
 });
+
+const isMac = computed(() => {
+    if (import.meta.server) return false;
+    return /macintosh|mac os x/i.test(navigator.userAgent) && !/iphone|ipad/i.test(navigator.userAgent);
+});
 const releasesPage = 'https://github.com/dest4590/CollapseLoader/releases';
 const latestHref = computed(() => {
     if (isLinux.value || isWindows.value) return releasesPage;
@@ -123,7 +128,7 @@ onMounted(async () => {
     try {
         const ua = navigator?.userAgent || '';
         const pf = (navigator as any)?.platform || '';
-        isLinux.value = /linux/i.test(ua) || /linux/i.test(pf);
+        isLinux.value = (/linux/i.test(ua) || /linux/i.test(pf)) && !/android/i.test(ua);
     } catch (e) {
         isLinux.value = false;
     }
@@ -379,34 +384,23 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             style="--delay: 200ms"
                         >
                             <div class="download-card-icon">
-                                <Rocket class="w-6 h-6" />
+                                <Rocket class="w-7 h-7" />
                             </div>
                             <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <h3 class="text-base font-bold text-base-content">{{ t('download.latest') }}</h3>
+                                <div class="flex items-center gap-2 mb-1.5">
+                                    <h3 class="text-lg font-bold text-base-content">{{ t('download.latest') }}</h3>
                                     <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/10 text-primary">Stable</span>
                                 </div>
                                 <p class="text-sm text-base-content/50">{{ t('download.latest_desc') }}</p>
                             </div>
                             <div v-if="isWindows && latestWindowsOptions.length" class="flex flex-wrap gap-2 mt-1">
-                                <a
-                                    v-for="opt in latestWindowsOptions"
-                                    :key="opt.label"
-                                    :href="opt.href"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="format-btn"
-                                >{{ opt.label }}</a>
+                                <a v-for="opt in latestWindowsOptions" :key="opt.label" :href="opt.href" target="_blank" rel="noopener noreferrer" class="format-btn">{{ opt.label }}</a>
                             </div>
                             <div v-else-if="isLinux && latestLinuxOptions.length" class="flex flex-wrap gap-2 mt-1">
-                                <a
-                                    v-for="opt in latestLinuxOptions"
-                                    :key="opt.label"
-                                    :href="opt.href"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="format-btn"
-                                >{{ opt.label }}</a>
+                                <a v-for="opt in latestLinuxOptions" :key="opt.label" :href="opt.href" target="_blank" rel="noopener noreferrer" class="format-btn">{{ opt.label }}</a>
+                            </div>
+                            <div v-else-if="isMac" class="flex flex-wrap gap-2 mt-1">
+                                <a :href="releasesPage" target="_blank" rel="noopener noreferrer" class="format-btn">GitHub Releases →</a>
                             </div>
                             <a v-else :href="latestHref" target="_blank" rel="noopener noreferrer" class="download-card-cta">
                                 {{ t('download.get_latest') }} →
@@ -418,34 +412,23 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             style="--delay: 300ms"
                         >
                             <div class="download-card-icon">
-                                <Download class="w-6 h-6" />
+                                <Download class="w-7 h-7" />
                             </div>
                             <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <h3 class="text-base font-bold text-base-content">Nightly</h3>
+                                <div class="flex items-center gap-2 mb-1.5">
+                                    <h3 class="text-lg font-bold text-base-content">Nightly</h3>
                                     <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-base-content/8 text-base-content/50">Preview</span>
                                 </div>
                                 <p class="text-sm text-base-content/50">{{ t('download.nightly_desc') }}</p>
                             </div>
                             <div v-if="isWindows && preWindowsOptions.length" class="flex flex-wrap gap-2 mt-1">
-                                <a
-                                    v-for="opt in preWindowsOptions"
-                                    :key="opt.label"
-                                    :href="opt.href"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="format-btn"
-                                >{{ opt.label }}</a>
+                                <a v-for="opt in preWindowsOptions" :key="opt.label" :href="opt.href" target="_blank" rel="noopener noreferrer" class="format-btn">{{ opt.label }}</a>
                             </div>
                             <div v-else-if="isLinux && preLinuxOptions.length" class="flex flex-wrap gap-2 mt-1">
-                                <a
-                                    v-for="opt in preLinuxOptions"
-                                    :key="opt.label"
-                                    :href="opt.href"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="format-btn"
-                                >{{ opt.label }}</a>
+                                <a v-for="opt in preLinuxOptions" :key="opt.label" :href="opt.href" target="_blank" rel="noopener noreferrer" class="format-btn">{{ opt.label }}</a>
+                            </div>
+                            <div v-else-if="isMac" class="flex flex-wrap gap-2 mt-1">
+                                <a :href="releasesPage" target="_blank" rel="noopener noreferrer" class="format-btn">GitHub Releases →</a>
                             </div>
                             <a v-else :href="prereleaseHref" target="_blank" rel="noopener noreferrer" class="download-card-cta">
                                 {{ t('download.get_nightly') }} →
@@ -460,10 +443,10 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             style="--delay: 400ms"
                         >
                             <div class="download-card-icon">
-                                <Github class="w-6 h-6" />
+                                <Github class="w-7 h-7" />
                             </div>
                             <div class="flex-1">
-                                <h3 class="text-base font-bold text-base-content mb-1">{{ t('download.source_code') }}</h3>
+                                <h3 class="text-lg font-bold text-base-content mb-1.5">{{ t('download.source_code') }}</h3>
                                 <p class="text-sm text-base-content/50">{{ t('download.source_code_desc') }}</p>
                             </div>
                             <span class="download-card-cta">{{ t('download.view_source') }} →</span>
@@ -641,12 +624,12 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
 }
 
 .download-card {
-    @apply flex flex-col gap-4 p-6 rounded-2xl border border-base-content/8 bg-base-200/50 transition-all duration-300;
+    @apply flex flex-col gap-5 p-8 rounded-2xl border border-base-content/8 bg-base-200/50 transition-all duration-300;
     @apply hover:border-primary/20 hover:bg-base-200/80 hover:-translate-y-1 hover:shadow-lg;
 }
 
 .download-card-icon {
-    @apply w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 transition-all duration-300;
+    @apply w-14 h-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 transition-all duration-300;
 }
 
 .download-card:hover .download-card-icon {
