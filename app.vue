@@ -3,10 +3,12 @@
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
+    <ContributorsFooter />
   </div>
 </template>
 
 <script setup>
+import ContributorsFooter from '~/components/ContributorsFooter.vue';
 const i18nHead = useLocaleHead({
   addDirAttribute: true,
   identifierAttribute: 'id',

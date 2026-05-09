@@ -128,7 +128,8 @@
         "issues": "Сообщить о проблеме",
         "discord": "Discord",
         "telegram": "Telegram",
-        "not_affiliated": "Не связано с Mojang или Microsoft."
+        "not_affiliated": "Не связано с Mojang или Microsoft.",
+        "thank": "Спасибо всем контрибьюторам!"
     },
     "changelog": {
         "title": "Чейнджлог",

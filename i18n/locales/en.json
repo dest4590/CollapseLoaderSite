@@ -128,7 +128,8 @@
         "issues": "Report an issue",
         "discord": "Discord",
         "telegram": "Telegram",
-        "not_affiliated": "Not affiliated with Mojang or Microsoft."
+        "not_affiliated": "Not affiliated with Mojang or Microsoft.",
+        "thank": "Thanks to all contributors!"
     },
     "changelog": {
         "title": "Changelog",

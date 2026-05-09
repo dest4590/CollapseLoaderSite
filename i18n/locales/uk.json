@@ -112,7 +112,8 @@
         "issues": "Повідомити про проблему",
         "discord": "Discord",
         "telegram": "Telegram",
-        "not_affiliated": "Не пов'язано з Mojang або Microsoft."
+        "not_affiliated": "Не пов'язано з Mojang або Microsoft.",
+        "thank": "Дякуємо всім контриб’юторам!"
     },
     "changelog": {
         "title": "Чейнджлог",
