@@ -13,8 +13,14 @@ export default defineNuxtConfig({
         sources: ['/api/__sitemap__/urls'],
     },
     css: ['~/assets/style.css'],
+    seo: {
+      titleTemplate: (title: string) => title,
+      site: { name: '' },
+      titleSeparator: ''
+    },
     app: {
         head: {
+          titleTemplate: '' ,
             title: 'CollapseLoader - Secure Open Source Minecraft Cheat Client Loader',
             charset: 'utf-8',
             viewport: 'width=device-width, initial-scale=1.0',
