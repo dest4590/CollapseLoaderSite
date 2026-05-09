@@ -271,17 +271,44 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
             <section id="features" class="relative py-24">
                 <div class="section-wave-divider-top"></div>
                 <div class="bg-base-100 py-24">
-                    <div class="container mx-auto px-6 text-center">
-                        <div class="max-w-4xl mx-auto mb-20">
+                    <div class="container mx-auto px-6">
+                        <div class="max-w-4xl mx-auto text-center mb-16">
                             <h2 class="section-title animate-on-scroll anim-fade-up">{{ t('why.title') }}</h2>
                             <p class="section-subtitle animate-on-scroll anim-fade-up text-xl" style="--delay: 100ms">
                                 {{ t('why.desc') }}
                             </p>
                         </div>
-                        <div class="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
-                            <FeatureCard :title="t('why.open.title')" :description="t('why.open.desc')" :icon="Unlock" :delay="200" variant="primary" class="animate-on-scroll anim-scale-in" />
-                            <FeatureCard :title="t('why.modern.title')" :description="t('why.modern.desc')" :icon="Zap" :delay="300" variant="secondary" class="animate-on-scroll anim-scale-in" />
-                            <FeatureCard :title="t('why.safe.title')" :description="t('why.safe.desc')" :icon="ShieldCheck" :delay="400" variant="accent" class="animate-on-scroll anim-scale-in" />
+                        <div class="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+                            <div
+                                class="why-card animate-on-scroll anim-fade-up"
+                                style="--delay: 200ms"
+                            >
+                                <div class="why-icon">
+                                    <Unlock class="w-6 h-6" />
+                                </div>
+                                <h3 class="text-lg font-bold text-base-content mb-2">{{ t('why.open.title') }}</h3>
+                                <p class="text-sm text-base-content/55 leading-relaxed">{{ t('why.open.desc') }}</p>
+                            </div>
+                            <div
+                                class="why-card animate-on-scroll anim-fade-up"
+                                style="--delay: 300ms"
+                            >
+                                <div class="why-icon">
+                                    <Zap class="w-6 h-6" />
+                                </div>
+                                <h3 class="text-lg font-bold text-base-content mb-2">{{ t('why.modern.title') }}</h3>
+                                <p class="text-sm text-base-content/55 leading-relaxed">{{ t('why.modern.desc') }}</p>
+                            </div>
+                            <div
+                                class="why-card animate-on-scroll anim-fade-up"
+                                style="--delay: 400ms"
+                            >
+                                <div class="why-icon">
+                                    <ShieldCheck class="w-6 h-6" />
+                                </div>
+                                <h3 class="text-lg font-bold text-base-content mb-2">{{ t('why.safe.title') }}</h3>
+                                <p class="text-sm text-base-content/55 leading-relaxed">{{ t('why.safe.desc') }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -334,48 +361,113 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
 
             <ExclusiveFeatures />
 
-            <section id="downloads" class="py-32 bg-base-200/95 backdrop-blur-sm relative">
+            <section id="downloads" class="py-32 bg-base-200/95 relative">
                 <div class="absolute inset-0 pointer-events-none z-0">
                     <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-1/2 download-gradient-bg"></div>
                 </div>
-                <div class="container mx-auto px-6 text-center relative z-10">
-                    <h2 class="section-title animate-on-scroll anim-fade-up">{{ t('download.title') }}</h2>
-                    <p class="section-subtitle animate-on-scroll anim-fade-up" style="--delay: 100ms">{{ t('download.desc') }}</p>
-                    <p v-if="isLinux" class="section-subtitle text-sm mt-2 text-base-content/70">
-                        {{ t('download.aur_note', { pkg1: 'collapseloader-bin', pkg2: 'collapseloader-git' }) }}
-                    </p>
-                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
-                        <DownloadCard
-                            :icon="Rocket"
-                            :title="t('download.latest')"
-                            :description="t('download.latest_desc')"
-                            :href="latestHref"
-                            :cta-text="t('download.get_latest')"
-                            :loading="!latestReleaseLoaded && !latestReleaseUrl"
-                            variant="primary"
-                            :delay="200"
-                            :options="isLinux ? latestLinuxOptions : isWindows ? latestWindowsOptions : []"
-                        />
-                        <DownloadCard
-                            :icon="Download"
-                            :title="'Nightly'"
-                            :description="t('download.nightly_desc')"
-                            :href="prereleaseHref"
-                            :cta-text="t('download.get_nightly')"
-                            :loading="!latestPrereleaseLoaded && !latestPrereleaseUrl"
-                            variant="secondary"
-                            :delay="300"
-                            :options="isLinux ? preLinuxOptions : isWindows ? preWindowsOptions : []"
-                        />
-                        <DownloadCard
-                            :icon="Github"
-                            :title="t('download.source_code')"
-                            :description="t('download.source_code_desc')"
+                <div class="container mx-auto px-6 relative z-10">
+                    <div class="max-w-4xl mx-auto text-center mb-14">
+                        <h2 class="section-title animate-on-scroll anim-fade-up">{{ t('download.title') }}</h2>
+                        <p class="section-subtitle animate-on-scroll anim-fade-up" style="--delay: 100ms">{{ t('download.desc') }}</p>
+                        <p v-if="isLinux" class="text-sm text-base-content/50 -mt-8 mb-8">
+                            {{ t('download.aur_note', { pkg1: 'collapseloader-bin', pkg2: 'collapseloader-git' }) }}
+                        </p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+                        <div
+                            class="download-card animate-on-scroll anim-fade-up group"
+                            style="--delay: 200ms"
+                        >
+                            <div class="download-card-icon">
+                                <Rocket class="w-6 h-6" />
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h3 class="text-base font-bold text-base-content">{{ t('download.latest') }}</h3>
+                                    <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/10 text-primary">Stable</span>
+                                </div>
+                                <p class="text-sm text-base-content/50">{{ t('download.latest_desc') }}</p>
+                            </div>
+                            <div v-if="isWindows && latestWindowsOptions.length" class="flex flex-wrap gap-2 mt-1">
+                                <a
+                                    v-for="opt in latestWindowsOptions"
+                                    :key="opt.label"
+                                    :href="opt.href"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="format-btn"
+                                >{{ opt.label }}</a>
+                            </div>
+                            <div v-else-if="isLinux && latestLinuxOptions.length" class="flex flex-wrap gap-2 mt-1">
+                                <a
+                                    v-for="opt in latestLinuxOptions"
+                                    :key="opt.label"
+                                    :href="opt.href"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="format-btn"
+                                >{{ opt.label }}</a>
+                            </div>
+                            <a v-else :href="latestHref" target="_blank" rel="noopener noreferrer" class="download-card-cta">
+                                {{ t('download.get_latest') }} →
+                            </a>
+                        </div>
+
+                        <div
+                            class="download-card animate-on-scroll anim-fade-up group"
+                            style="--delay: 300ms"
+                        >
+                            <div class="download-card-icon">
+                                <Download class="w-6 h-6" />
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h3 class="text-base font-bold text-base-content">Nightly</h3>
+                                    <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-base-content/8 text-base-content/50">Preview</span>
+                                </div>
+                                <p class="text-sm text-base-content/50">{{ t('download.nightly_desc') }}</p>
+                            </div>
+                            <div v-if="isWindows && preWindowsOptions.length" class="flex flex-wrap gap-2 mt-1">
+                                <a
+                                    v-for="opt in preWindowsOptions"
+                                    :key="opt.label"
+                                    :href="opt.href"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="format-btn"
+                                >{{ opt.label }}</a>
+                            </div>
+                            <div v-else-if="isLinux && preLinuxOptions.length" class="flex flex-wrap gap-2 mt-1">
+                                <a
+                                    v-for="opt in preLinuxOptions"
+                                    :key="opt.label"
+                                    :href="opt.href"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="format-btn"
+                                >{{ opt.label }}</a>
+                            </div>
+                            <a v-else :href="prereleaseHref" target="_blank" rel="noopener noreferrer" class="download-card-cta">
+                                {{ t('download.get_nightly') }} →
+                            </a>
+                        </div>
+
+                        <a
                             href="https://github.com/dest4590/CollapseLoader"
-                            :cta-text="t('download.view_source')"
-                            variant="accent"
-                            :delay="400"
-                        />
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="download-card animate-on-scroll anim-fade-up group"
+                            style="--delay: 400ms"
+                        >
+                            <div class="download-card-icon">
+                                <Github class="w-6 h-6" />
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-base font-bold text-base-content mb-1">{{ t('download.source_code') }}</h3>
+                                <p class="text-sm text-base-content/50">{{ t('download.source_code_desc') }}</p>
+                            </div>
+                            <span class="download-card-cta">{{ t('download.view_source') }} →</span>
+                        </a>
                     </div>
                 </div>
             </section>
@@ -533,6 +625,40 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
 @keyframes pan-dots {
     0% { background-position: 0% 0%; }
     100% { background-position: 15px 15px; }
+}
+
+.why-card {
+    @apply p-6 rounded-2xl border border-base-content/8 bg-base-200/50 transition-all duration-300;
+    @apply hover:border-primary/20 hover:bg-base-200/80 hover:-translate-y-1 hover:shadow-lg;
+}
+
+.why-icon {
+    @apply w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4 transition-all duration-300;
+}
+
+.why-card:hover .why-icon {
+    @apply bg-primary/15 scale-110;
+}
+
+.download-card {
+    @apply flex flex-col gap-4 p-6 rounded-2xl border border-base-content/8 bg-base-200/50 transition-all duration-300;
+    @apply hover:border-primary/20 hover:bg-base-200/80 hover:-translate-y-1 hover:shadow-lg;
+}
+
+.download-card-icon {
+    @apply w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 transition-all duration-300;
+}
+
+.download-card:hover .download-card-icon {
+    @apply bg-primary/15 scale-110;
+}
+
+.download-card-cta {
+    @apply text-sm font-semibold text-primary/60 group-hover:text-primary transition-colors duration-200;
+}
+
+.format-btn {
+    @apply text-xs font-bold px-3 py-1.5 rounded-lg border border-base-content/10 text-base-content/60 hover:text-primary hover:border-primary/30 hover:bg-primary/5 transition-all duration-200;
 }
 
 .ghost-btn {
