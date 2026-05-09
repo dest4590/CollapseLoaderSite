@@ -7,6 +7,7 @@
     "lang": "Language",
     "lang_en": "English",
     "lang_ru": "Russian",
+    "lang_uk": "Ukrainian",
     "nav": {
         "why": "Why us",
         "features": "Features",
@@ -86,6 +87,15 @@
                 "Notifications",
                 "Presence"
             ]
+        },
+        "custom_clients": {
+            "title": "Custom clients",
+            "desc": "Add your own Minecraft clients — Vanilla, Fabric or Forge. Manage them alongside the built-in catalog.",
+            "badges": [
+                "Vanilla",
+                "Fabric",
+                "Forge"
+            ]
         }
     },
     "analytics": {
@@ -118,6 +128,14 @@
         "discord": "Discord",
         "telegram": "Telegram",
         "not_affiliated": "Not affiliated with Mojang or Microsoft."
+    },
+    "changelog": {
+        "title": "Changelog",
+        "subtitle": "Recent commits from CollapseLoader repository.",
+        "refresh": "Refresh",
+        "no_commits": "No commits found in this branch.",
+        "branch_main": "Stable",
+        "branch_dev": "Dev"
     },
     "clients": {
         "seo_title": "Client Catalog – CollapseLoader",

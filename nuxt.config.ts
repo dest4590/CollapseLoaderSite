@@ -144,18 +144,9 @@ export default defineNuxtConfig({
     i18n: {
         baseUrl: 'https://collapseloader.org',
         locales: [
-            {
-                code: 'en',
-                language: 'en-US',
-                name: 'English',
-                file: 'en.json',
-            },
-            {
-                code: 'ru',
-                language: 'ru-RU',
-                name: 'Русский',
-                file: 'ru.json',
-            },
+            { code: 'en', language: 'en-US', name: 'English', file: 'en.json' },
+            { code: 'ru', language: 'ru-RU', name: 'Русский', file: 'ru.json' },
+            { code: 'uk', language: 'uk-UA', name: 'Українська', file: 'uk.json' },
         ],
         langDir: 'locales',
         defaultLocale: 'en',

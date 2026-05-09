@@ -1,6 +1,11 @@
 @import 'tailwindcss';
 @plugin "daisyui";
 
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+}
+
 :root {
     --color-base-100: oklch(17% 0 0);
     --color-base-200: oklch(21% 0 0);
@@ -30,6 +35,54 @@
     --border: 1px;
     --depth: 0;
     --noise: 0;
+}
+
+[data-theme="light"] {
+    --color-base-100: oklch(98% 0 0);
+    --color-base-200: oklch(94% 0 0);
+    --color-base-300: oklch(89% 0 0);
+    --color-base-content: oklch(15% 0 0);
+    --color-primary: oklch(20% 0 0);
+    --color-primary-content: oklch(98% 0 0);
+    --color-secondary: oklch(60% 0 0);
+    --color-secondary-content: oklch(98% 0 0);
+    --color-accent: oklch(60% 0 0);
+    --color-accent-content: oklch(98% 0 0);
+    --color-neutral: oklch(85% 0 0);
+    --color-neutral-content: oklch(15% 0 0);
+    --color-info: oklch(58% 0.158 241.966);
+    --color-info-content: oklch(97% 0.013 236.62);
+    --color-success: oklch(64% 0.2 131.684);
+    --color-success-content: oklch(98% 0.031 120.757);
+    --color-warning: oklch(68% 0.162 75.834);
+    --color-warning-content: oklch(98% 0.026 102.212);
+    --color-error: oklch(58% 0.253 17.585);
+    --color-error-content: oklch(96% 0.015 12.422);
+    --radius-selector: 0.5rem;
+    --radius-field: 0.5rem;
+    --radius-box: 0.5rem;
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 1px;
+    --depth: 0;
+    --noise: 0;
+}
+
+html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.theme-transitioning,
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+    transition:
+        background-color 0.35s ease,
+        border-color 0.35s ease,
+        color 0.35s ease,
+        fill 0.35s ease,
+        stroke 0.35s ease,
+        box-shadow 0.35s ease !important;
 }
 
 @font-face {
@@ -221,7 +274,7 @@
 }
 
 .btn:hover {
-    transform: translateY(-3px) scale(1.01);
+    transform: translateY(-1px) scale(1.005);
 }
 
 /* Smooth appearance helper for JS-driven reveals */

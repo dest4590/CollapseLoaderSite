@@ -1,0 +1,163 @@
+{
+    "back": "Назад",
+    "search_clients": "Пошук клієнтів",
+    "launches": "запусків",
+    "no_clients_found": "Клієнтів не знайдено",
+    "brand": "CollapseLoader",
+    "lang": "Мова",
+    "lang_en": "Англійська",
+    "lang_ru": "Російська",
+    "lang_uk": "Українська",
+    "nav": {
+        "why": "Чому ми",
+        "features": "Функції",
+        "safety": "Безпека",
+        "download": "Завантажити",
+        "clients": "Клієнти"
+    },
+    "hero": {
+        "title": "CollapseLoader",
+        "subtitle": "Запускайте клієнти Minecraft в один клік",
+        "desc": "Відкритий лоадер із сучасним інтерфейсом та великим каталогом клієнтів.",
+        "download": "Завантажити",
+        "source": "Вихідний код",
+        "clients": "Каталог клієнтів"
+    },
+    "why": {
+        "title": "Чому CollapseLoader",
+        "desc": "Швидкість, безпека та спільнота в одному місці.",
+        "open": {
+            "title": "Відкритий код",
+            "desc": "Прозора кодова база, яку можна перевірити та доповнити."
+        },
+        "modern": {
+            "title": "Сучасно та швидко",
+            "desc": "Легкий інтерфейс, плавні анімації та часті оновлення."
+        },
+        "safe": {
+            "title": "Безпека",
+            "desc": "Лише перевірені клієнти та релізи."
+        }
+    },
+    "community": {
+        "title": "Спільнота",
+        "desc": "Приєднуйтесь до Discord та Telegram.",
+        "discord_title": "Discord",
+        "discord_desc": "Спілкуйтесь з командою та отримуйте підтримку.",
+        "discord_cta": "Приєднатися до Discord",
+        "telegram_title": "Telegram",
+        "telegram_desc": "Новини, анонси та швидкі оновлення.",
+        "telegram_cta": "Приєднатися до Telegram"
+    },
+    "features": {
+        "title": "Ексклюзивні можливості",
+        "desc": "Все необхідне для керування та запуску клієнтів.",
+        "cloud": {
+            "title": "Хмарні профілі",
+            "desc": "Синхронізація налаштувань між пристроями.",
+            "badges": ["Синхронізація", "Резервні копії", "Профілі"]
+        },
+        "custom": {
+            "title": "Кастомізація",
+            "desc": "Теми, поведінка та зручні налаштування.",
+            "badges": ["Теми", "Моди", "Шорткати"]
+        },
+        "cord": {
+            "title": "Координати та карти",
+            "desc": "Швидкий доступ до інструментів локацій.",
+            "badges": ["Мітки", "Оверлей", "Шеринг"]
+        },
+        "irc": {
+            "title": "Вбудований чат",
+            "desc": "Залишайтесь на зв'язку, не виходячи з лоадера.",
+            "badges": ["Канали", "Сповіщення", "Статус"]
+        },
+        "custom_clients": {
+            "title": "Кастом клієнти",
+            "desc": "Додавайте власні клієнти Minecraft — Vanilla, Fabric або Forge. Керуйте ними разом із вбудованим каталогом.",
+            "badges": [
+                "Vanilla",
+                "Fabric",
+                "Forge"
+            ]
+        }
+    },
+    "analytics": {
+        "title": "Статистика",
+        "desc": "Реальні показники використання CollapseLoader.",
+        "loader_launches": "Запуски лоадера",
+        "loader_launches_desc": "Скільки разів лоадер запускався.",
+        "client_downloads": "Завантаження клієнтів",
+        "client_downloads_desc": "Сумарні завантаження всіх клієнтів.",
+        "client_launches": "Запуски клієнтів",
+        "client_launches_desc": "Кількість успішних запусків."
+    },
+    "download": {
+        "title": "Завантажити CollapseLoader",
+        "desc": "Оберіть стабільну версію або нічну збірку.",
+        "aur_note": "В Arch Linux встановіть {pkg1} або {pkg2} з AUR.",
+        "latest": "Останній реліз",
+        "latest_desc": "Стабільна версія для більшості користувачів.",
+        "get_latest": "Завантажити",
+        "nightly_desc": "Попередня збірка з новими функціями.",
+        "get_nightly": "Завантажити nightly",
+        "source_code": "Вихідний код",
+        "source_code_desc": "Відкрити репозиторій на GitHub.",
+        "view_source": "Відкрити код"
+    },
+    "footer": {
+        "desc": "Відкритий лоадер для клієнтів Minecraft.",
+        "copyright": "© 2026 CollapseLoader. Всі права захищені.",
+        "issues": "Повідомити про проблему",
+        "discord": "Discord",
+        "telegram": "Telegram",
+        "not_affiliated": "Не пов'язано з Mojang або Microsoft."
+    },
+    "changelog": {
+        "title": "Чейнджлог",
+        "subtitle": "Останні коміти з репозиторію CollapseLoader.",
+        "refresh": "Оновити",
+        "no_commits": "Комітів у цій гілці не знайдено.",
+        "branch_main": "Стабільна",
+        "branch_dev": "Dev"
+    },
+    "clients": {
+        "seo_title": "Каталог клієнтів – CollapseLoader",
+        "seo_desc": "Оберіть найкращий клієнт для Minecraft та запустіть його в один клік через наш лоадер.",
+        "title": "Каталог клієнтів",
+        "subtitle": "Досліджуйте нашу колекцію відібраних високопродуктивних клієнтів Minecraft.",
+        "tabs": {
+            "all": "Всі",
+            "vanilla": "Vanilla",
+            "fabric": "Fabric",
+            "forge": "Forge"
+        },
+        "clear_filters": "Очистити фільтри",
+        "try_adjusting": "Спробуйте змінити запит або фільтри.",
+        "back_to_library": "Назад до бібліотеки",
+        "loading": "Завантаження...",
+        "detail": {
+            "description_title": "Огляд",
+            "launch": "Запуск",
+            "launch_now": "Запустити",
+            "loader_status": "Статус лоадера",
+            "ready": "Готовий до запуску",
+            "safety": "Безпека",
+            "safety_desc": "Клієнт перевірено в безпечному середовищі. CollapseLoader гарантує відсутність шкідливого коду та стабільну роботу.",
+            "stats": {
+                "downloads": "Завантажень",
+                "version": "Версія",
+                "type": "Тип збірки",
+                "status": "Стан"
+            },
+            "seo_title_suffix": "Завантажити для Minecraft",
+            "og_title_suffix": "Запуск через CollapseLoader",
+            "description_template": "Шукаєте {name} для Minecraft? Завантажте {name} версії {version} ({type}) безкоштовно. Перевірений та безпечний клієнт для CollapseLoader.",
+            "description_paragraph": "Перевірений клієнт для версії {version}. Тип збірки: {type}. Повністю сумісний з CollapseLoader та готовий до роботи. Якщо у вас не встановлено лоадер, ви можете завантажити його на головній сторінці.",
+            "download_loader_hint": "Немає лоадера? Завантажте його на {link}.",
+            "main_page": "головній сторінці",
+            "status_ok": "Працює",
+            "status_error": "Не працює"
+        }
+    }
+}

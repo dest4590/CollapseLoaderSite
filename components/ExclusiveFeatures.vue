@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { Users, Settings, MessageCircle, MapPin } from 'lucide-vue-next';
+import { Users, Settings, MessageCircle, MapPin, PackagePlus } from 'lucide-vue-next';
 
 const { t, tm } = useI18n();
 
@@ -53,18 +53,25 @@ onMounted(() => {
         </div>
 
         <div class="container mx-auto px-6 space-y-32 mt-16">
-            <FeatureSection :title="t('features.cloud.title')" :description="t('features.cloud.desc')" :icon="Users"
-                :badges="getBadges('features.cloud.badges')" icon-color="primary" :delay="0" />
+            <template v-if="false">
+                <FeatureSection :title="t('features.cloud.title')" :description="t('features.cloud.desc')" :icon="Users"
+                    :badges="getBadges('features.cloud.badges')" icon-color="primary" :delay="0" />
+            </template>
 
             <FeatureSection :title="t('features.custom.title')" :description="t('features.custom.desc')"
                 :icon="Settings" :badges="getBadges('features.custom.badges')" icon-color="primary" :reverse="true"
-                :delay="200" />
+                :delay="0" />
 
-            <FeatureSection :title="t('features.cord.title')" :description="t('features.cord.desc')" :icon="MapPin"
-                :badges="getBadges('features.cord.badges')" icon-color="primary" :delay="400" />
+            <template v-if="false">
+                <FeatureSection :title="t('features.cord.title')" :description="t('features.cord.desc')" :icon="MapPin"
+                    :badges="getBadges('features.cord.badges')" icon-color="primary" :delay="0" />
+            </template>
 
             <FeatureSection :title="t('features.irc.title')" :description="t('features.irc.desc')" :icon="MessageCircle"
-                :badges="getBadges('features.irc.badges')" icon-color="primary" :reverse="true" :delay="600" />
+                :badges="getBadges('features.irc.badges')" icon-color="primary" :reverse="false" :delay="200" />
+
+            <FeatureSection :title="t('features.custom_clients.title')" :description="t('features.custom_clients.desc')" :icon="PackagePlus"
+                :badges="getBadges('features.custom_clients.badges')" icon-color="primary" :reverse="true" :delay="400" />
         </div>
     </section>
 </template>
