@@ -19,8 +19,10 @@ export function useGitHubReleases(repoUrl: string) {
 
     const latestLinuxAppImageUrl = ref<string>('');
     const latestLinuxDebUrl = ref<string>('');
+    const latestLinuxRpmUrl = ref<string>('');
     const latestPreLinuxAppImageUrl = ref<string>('');
     const latestPreLinuxDebUrl = ref<string>('');
+    const latestPreLinuxRpmUrl = ref<string>('');
 
     const latestWindowsExeUrl = ref<string>('');
     const latestWindowsMsiUrl = ref<string>('');
@@ -28,6 +30,8 @@ export function useGitHubReleases(repoUrl: string) {
     const latestPreWindowsExeUrl = ref<string>('');
     const latestPreWindowsMsiUrl = ref<string>('');
     const latestPreWindowsSetupUrl = ref<string>('');
+
+    const latestMacDmgUrl = ref<string>('');
 
     async function fetchJSON(url: string): Promise<any> {
         try {
@@ -43,19 +47,13 @@ export function useGitHubReleases(repoUrl: string) {
     }
 
     function pickLinuxAssets(assets: GitHubRelease['assets'] | undefined) {
-        const result = {
-            appImage: '',
-            deb: '',
-        };
+        const result = { appImage: '', deb: '', rpm: '' };
         if (!assets) return result;
         for (const a of assets) {
             const name = a?.name?.toLowerCase?.() || '';
-            if (!result.appImage && name.endsWith('.appimage')) {
-                result.appImage = a.browser_download_url;
-            }
-            if (!result.deb && name.endsWith('.deb')) {
-                result.deb = a.browser_download_url;
-            }
+            if (!result.appImage && name.endsWith('.appimage')) result.appImage = a.browser_download_url;
+            if (!result.deb && name.endsWith('.deb')) result.deb = a.browser_download_url;
+            if (!result.rpm && name.endsWith('.rpm')) result.rpm = a.browser_download_url;
         }
         return result;
     }
@@ -83,21 +81,26 @@ export function useGitHubReleases(repoUrl: string) {
         return result;
     }
 
+    function pickMacAssets(assets: GitHubRelease['assets'] | undefined): string {
+        if (!assets) return '';
+        const dmg = assets.find(a => a?.name?.toLowerCase().endsWith('.dmg'));
+        return dmg?.browser_download_url ?? '';
+    }
+
     async function fetchLatestRelease(): Promise<void> {
         latestReleaseLoaded.value = false;
         try {
-            const data: GitHubRelease = await fetchJSON(
-                `${repoUrl}/releases/latest`,
-            );
-            latestReleaseUrl.value =
-                data?.assets?.[0]?.browser_download_url ?? '';
+            const data: GitHubRelease = await fetchJSON(`${repoUrl}/releases/latest`);
+            latestReleaseUrl.value = data?.assets?.[0]?.browser_download_url ?? '';
             const linux = pickLinuxAssets(data?.assets);
             latestLinuxAppImageUrl.value = linux.appImage;
             latestLinuxDebUrl.value = linux.deb;
+            latestLinuxRpmUrl.value = linux.rpm;
             const windows = pickWindowsAssets(data?.assets);
             latestWindowsExeUrl.value = windows.exe;
             latestWindowsMsiUrl.value = windows.msi;
             latestWindowsSetupUrl.value = windows.setup;
+            latestMacDmgUrl.value = pickMacAssets(data?.assets);
         } catch (err) {
             error.value = 'Failed to fetch latest release';
             console.error('Failed to fetch latest release:', err);
@@ -120,6 +123,7 @@ export function useGitHubReleases(repoUrl: string) {
             const linux = pickLinuxAssets(latestPrerelease?.assets);
             latestPreLinuxAppImageUrl.value = linux.appImage;
             latestPreLinuxDebUrl.value = linux.deb;
+            latestPreLinuxRpmUrl.value = linux.rpm;
             const windows = pickWindowsAssets(latestPrerelease?.assets);
             latestPreWindowsExeUrl.value = windows.exe;
             latestPreWindowsMsiUrl.value = windows.msi;
@@ -143,16 +147,18 @@ export function useGitHubReleases(repoUrl: string) {
         latestPrereleaseLoaded,
         latestLinuxAppImageUrl,
         latestLinuxDebUrl,
+        latestLinuxRpmUrl,
         latestPreLinuxAppImageUrl,
         latestPreLinuxDebUrl,
+        latestPreLinuxRpmUrl,
         latestWindowsExeUrl,
         latestWindowsMsiUrl,
         latestWindowsSetupUrl,
         latestPreWindowsExeUrl,
         latestPreWindowsMsiUrl,
         latestPreWindowsSetupUrl,
+        latestMacDmgUrl,
         error,
-        refetch: () =>
-            Promise.all([fetchLatestRelease(), fetchLatestPrerelease()]),
+        refetch: () => Promise.all([fetchLatestRelease(), fetchLatestPrerelease()]),
     };
 }

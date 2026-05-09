@@ -33,14 +33,17 @@ const {
     latestPrereleaseLoaded,
     latestLinuxAppImageUrl,
     latestLinuxDebUrl,
+    latestLinuxRpmUrl,
     latestPreLinuxAppImageUrl,
     latestPreLinuxDebUrl,
+    latestPreLinuxRpmUrl,
     latestWindowsExeUrl,
     latestWindowsMsiUrl,
     latestWindowsSetupUrl,
     latestPreWindowsExeUrl,
     latestPreWindowsMsiUrl,
     latestPreWindowsSetupUrl,
+    latestMacDmgUrl,
 } = useGitHubReleases('https://api.github.com/repos/dest4590/CollapseLoader');
 
 const isWindows = computed(() => {
@@ -63,18 +66,16 @@ const prereleaseHref = computed(() => {
 });
 const latestLinuxOptions = computed(() => {
     const options: Array<{ label: string; href: string }> = [];
-    if (latestLinuxAppImageUrl.value)
-        options.push({ label: 'AppImage', href: latestLinuxAppImageUrl.value });
-    if (latestLinuxDebUrl.value)
-        options.push({ label: 'Deb', href: latestLinuxDebUrl.value });
+    if (latestLinuxAppImageUrl.value) options.push({ label: 'AppImage', href: latestLinuxAppImageUrl.value });
+    if (latestLinuxDebUrl.value) options.push({ label: 'Deb', href: latestLinuxDebUrl.value });
+    if (latestLinuxRpmUrl.value) options.push({ label: 'RPM', href: latestLinuxRpmUrl.value });
     return options;
 });
 const preLinuxOptions = computed(() => {
     const options: Array<{ label: string; href: string }> = [];
-    if (latestPreLinuxAppImageUrl.value)
-        options.push({ label: 'AppImage', href: latestPreLinuxAppImageUrl.value });
-    if (latestPreLinuxDebUrl.value)
-        options.push({ label: 'Deb', href: latestPreLinuxDebUrl.value });
+    if (latestPreLinuxAppImageUrl.value) options.push({ label: 'AppImage', href: latestPreLinuxAppImageUrl.value });
+    if (latestPreLinuxDebUrl.value) options.push({ label: 'Deb', href: latestPreLinuxDebUrl.value });
+    if (latestPreLinuxRpmUrl.value) options.push({ label: 'RPM', href: latestPreLinuxRpmUrl.value });
     return options;
 });
 const latestWindowsOptions = computed(() => {
@@ -400,7 +401,9 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                                 <a v-for="opt in latestLinuxOptions" :key="opt.label" :href="opt.href" target="_blank" rel="noopener noreferrer" class="format-btn">{{ opt.label }}</a>
                             </div>
                             <div v-else-if="isMac" class="flex flex-wrap gap-2 mt-1">
-                                <a :href="releasesPage" target="_blank" rel="noopener noreferrer" class="format-btn">GitHub Releases →</a>
+                                <a :href="latestMacDmgUrl || releasesPage" target="_blank" rel="noopener noreferrer" class="format-btn">
+                                    {{ latestMacDmgUrl ? 'DMG' : 'GitHub Releases →' }}
+                                </a>
                             </div>
                             <a v-else :href="latestHref" target="_blank" rel="noopener noreferrer" class="download-card-cta">
                                 {{ t('download.get_latest') }} →
@@ -428,7 +431,12 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                                 <a v-for="opt in preLinuxOptions" :key="opt.label" :href="opt.href" target="_blank" rel="noopener noreferrer" class="format-btn">{{ opt.label }}</a>
                             </div>
                             <div v-else-if="isMac" class="flex flex-wrap gap-2 mt-1">
-                                <a :href="releasesPage" target="_blank" rel="noopener noreferrer" class="format-btn">GitHub Releases →</a>
+                                <span class="text-xs font-medium text-base-content/30 flex items-center gap-1.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                                    </svg>
+                                    {{ t('download.macos_unavailable') }}
+                                </span>
                             </div>
                             <a v-else :href="prereleaseHref" target="_blank" rel="noopener noreferrer" class="download-card-cta">
                                 {{ t('download.get_nightly') }} →

@@ -119,7 +119,8 @@
         "get_nightly": "Скачать nightly",
         "source_code": "Исходный код",
         "source_code_desc": "Открыть репозиторий на GitHub.",
-        "view_source": "Открыть код"
+        "view_source": "Открыть код",
+        "macos_unavailable": "Недоступно для macOS"
     },
     "footer": {
         "desc": "Открытый лоадер для клиентов Minecraft.",
