@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Play, Download, ArrowLeft, ShieldCheck, Github, Star, Zap } from 'lucide-vue-next';
 import useClients from '~/composables/useClients';
+import { useTheme } from '~/composables/useTheme';
 
 const route = useRoute();
 const clientId = route.params.id as string;
@@ -12,15 +13,12 @@ const localePath = useLocalePath();
 const { isDark } = useTheme();
 const { all, fetchClients } = useClients();
 
-const clientRawDetailed = ref<{ success: boolean; data: any } | null>(null);
-const clientDetailed = computed(() => clientRawDetailed.value?.data ?? null);
-
 const clientInfo = computed(() => {
     const allClients = all.value ?? [];
     return allClients.find((c: any) => c?.id?.toString() === clientId.toString()) ?? null;
 });
 
-const client = computed(() => clientDetailed.value ?? clientInfo.value ?? null);
+const client = computed(() => clientInfo.value ?? null);
 
 const description = computed(() =>
     t('clients.detail.description_template', {
@@ -50,18 +48,13 @@ if (!all.value || all.value.length === 0) {
     await fetchClients();
 }
 
-const { data: fetchedDetailed, error } = await useFetch<{ success: boolean; data: any }>(
-    `https://atlas.collapseloader.org/api/v1/clients/${clientId}/detailed`,
-);
-clientRawDetailed.value = fetchedDetailed.value ?? null;
-
-if (!clientDetailed.value && !clientInfo.value && !error.value) {
+if (!clientInfo.value) {
     throw createError({ statusCode: 404, statusMessage: 'client not found' });
 }
 
 const launchClient = () => {
-    if (clientDetailed.value) {
-        window.location.href = `collapseloader://launch?client=${clientDetailed.value.id}`;
+    if (client.value?.id) {
+        window.location.href = `collapseloader://launch?client=${client.value.id}`;
     }
 };
 </script>
