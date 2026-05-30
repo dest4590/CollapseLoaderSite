@@ -3,12 +3,23 @@
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
-    <ContributorsFooter />
+    <ContributorsFooter v-if="showFooter" />
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue';
+import { useRoute } from '#imports';
 import ContributorsFooter from '~/components/ContributorsFooter.vue';
+
+const route = useRoute();
+
+const showFooter = computed(() => {
+  if (route.name && typeof route.name === 'string' && route.name.startsWith('clients-id')) {
+    return false;
+  }
+  return true;
+});
 const i18nHead = useLocaleHead({
   addDirAttribute: true,
   identifierAttribute: 'id',
