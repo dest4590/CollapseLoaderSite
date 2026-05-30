@@ -12,6 +12,7 @@ await fetchClients();
 
 const activeTab = ref('all');
 const searchQuery = ref('');
+const animKey = ref(0);
 
 const tabs = [
     { id: 'all', label: computed(() => t('clients.tabs.all')), icon: Layers, count: computed(() => all.value?.length || 0) },
@@ -36,6 +37,10 @@ const filteredClients = computed(() => {
     return list.filter(c => c.name.toLowerCase().includes(q) || c.version.toLowerCase().includes(q));
 });
 
+watch([searchQuery, activeTab], () => {
+    animKey.value++;
+});
+
 const launchClient = (client: any) => {
     if (client?.id) window.location.href = `collapseloader://launch?client=${client.id}`;
 };
@@ -56,7 +61,7 @@ useSeoMeta({
         </div>
 
         <div class="max-w-7xl mx-auto relative z-10 pt-28 pb-24 px-4 sm:px-6">
-            <header class="text-center mb-14">
+            <header class="text-center mb-14 header-enter">
                 <NuxtLink
                     :to="localePath('/')"
                     class="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full border text-sm font-medium transition-all duration-200 hover:opacity-70"
@@ -68,16 +73,16 @@ useSeoMeta({
                 </NuxtLink>
 
                 <h1
-                    class="text-5xl md:text-7xl font-black text-base-content mb-4 tracking-tight"
+                    class="text-5xl md:text-7xl font-black text-base-content mb-4 tracking-tight title-enter"
                     :style="{ fontFamily: '\'Kind Sans\', sans-serif' }"
                 >
                     {{ t('clients.title') }}
                 </h1>
-                <p class="text-base-content/50 max-w-lg mx-auto text-lg mb-10">
+                <p class="text-base-content/50 max-w-lg mx-auto text-lg mb-10 subtitle-enter">
                     {{ t('clients.subtitle') }}
                 </p>
 
-                <div class="max-w-3xl mx-auto">
+                <div class="max-w-3xl mx-auto search-enter">
                     <div
                         class="rounded-2xl p-2 flex flex-col md:flex-row gap-3 items-stretch md:items-center border"
                         :class="isDark ? 'bg-base-100/60 border-white/8' : 'bg-base-100/80 border-black/6'"
@@ -115,15 +120,20 @@ useSeoMeta({
                 </div>
             </header>
 
-            <div v-if="filteredClients.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div
+                v-if="filteredClients.length"
+                :key="animKey"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+            >
                 <NuxtLink
-                    v-for="client in filteredClients"
+                    v-for="(client, index) in filteredClients"
                     :key="client.id"
                     :to="localePath(`/clients/${client.id}`)"
-                    class="group block rounded-2xl p-6 border transition-all duration-300 hover:shadow-lg"
+                    class="card-item group block rounded-2xl p-6 border transition-all duration-300 hover:shadow-lg"
                     :class="isDark
                         ? 'bg-base-100/50 border-white/6 hover:bg-base-100/80 hover:border-white/12'
                         : 'bg-white/70 border-black/6 hover:bg-white hover:border-black/10 hover:shadow-black/8'"
+                    :style="{ '--i': index }"
                 >
                     <div class="flex flex-col h-full gap-4">
                         <div class="flex items-start justify-between">
@@ -142,7 +152,7 @@ useSeoMeta({
                             <span
                                 class="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg text-primary"
                                 :class="isDark ? 'bg-primary/10' : 'bg-primary/8'"
-                            >{{ client.client_type }}</span>
+                            >{{ client.client_type === 'default' ? 'Vanilla' : client.client_type }}</span>
                             <span
                                 class="text-[10px] font-bold px-2.5 py-1 rounded-lg"
                                 :class="isDark ? 'bg-white/5 text-base-content/30' : 'bg-black/5 text-base-content/30'"
@@ -162,7 +172,8 @@ useSeoMeta({
 
             <div
                 v-else
-                class="text-center py-32 rounded-2xl border border-dashed"
+                :key="'empty-' + animKey"
+                class="empty-block text-center py-32 rounded-2xl border border-dashed"
                 :class="isDark ? 'border-white/10' : 'border-black/10'"
             >
                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" :class="isDark ? 'bg-white/5' : 'bg-black/5'">
@@ -182,6 +193,65 @@ useSeoMeta({
 <style scoped>
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.header-enter {
+    animation: fade-up 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.title-enter {
+    animation: fade-up 0.55s cubic-bezier(0.23, 1, 0.32, 1) 0.05s both;
+}
+.subtitle-enter {
+    animation: fade-up 0.55s cubic-bezier(0.23, 1, 0.32, 1) 0.1s both;
+}
+.search-enter {
+    animation: fade-up 0.55s cubic-bezier(0.23, 1, 0.32, 1) 0.15s both;
+}
+
+@keyframes fade-up {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-item {
+    opacity: 0;
+    animation: card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: calc(var(--i, 0) * 50ms);
+}
+
+@keyframes card-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.empty-block {
+    animation: card-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.grid-enter-active {
+    transition: opacity 0.15s ease;
+}
+.grid-leave-active {
+    transition: opacity 0.1s ease;
+    position: absolute;
+    width: 100%;
+}
+.grid-enter-from,
+.grid-leave-to {
+    opacity: 0;
+}
+
+.empty-enter-active {
+    animation: fade-up 0.3s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.empty-leave-active {
+    animation: fade-up 0.2s ease reverse both;
+}
 </style>
 
 <style>

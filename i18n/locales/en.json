@@ -160,6 +160,11 @@
             "launch_now": "Launch Now",
             "loader_status": "Loader Status",
             "ready": "Ready to launch",
+            "ready_to_play": "Ready to play? Launch directly via CollapseLoader.",
+            "platform": "Platform",
+            "id": "ID",
+            "compatibility": "Compatibility",
+            "verified": "Verified",
             "safety": "Verified Safe",
             "safety_desc": "This client has been sandbox-tested. CollapseLoader ensures no malicious code and stable performance.",
             "stats": {

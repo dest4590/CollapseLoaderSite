@@ -68,7 +68,7 @@ const description = computed(() =>
     t('clients.detail.description_template', {
         name: client.value?.name,
         version: client.value?.version,
-        type: client.value?.client_type,
+        type: client.value?.client_type === 'default' ? 'Vanilla' : client.value?.client_type,
     }),
 );
 
@@ -128,7 +128,7 @@ const launchClient = () => {
                         >
                             <div class="flex flex-wrap items-center gap-2 mb-6">
                                 <span class="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg bg-primary/10 text-primary">
-                                    {{ client?.client_type || 'Client' }}
+                                    {{ client?.client_type === 'default' ? 'Vanilla' : (client?.client_type || 'Client') }}
                                 </span>
                                 <span
                                     v-if="clientInfo?.working"
@@ -278,7 +278,7 @@ const launchClient = () => {
                             :class="isDark ? 'bg-base-100/50 border-primary/20' : 'bg-white/80 border-primary/15'"
                         >
                             <h3 class="text-xl font-black text-base-content mb-1">{{ t('clients.detail.launch') }}</h3>
-                            <p class="text-xs text-base-content/40 mb-6">Ready to play? Launch directly via CollapseLoader.</p>
+                            <p class="text-xs text-base-content/40 mb-6">{{ t('clients.detail.ready_to_play') }}</p>
 
                             <button
                                 @click="launchClient"
@@ -305,17 +305,17 @@ const launchClient = () => {
                             :class="isDark ? 'bg-base-100/50 border-white/6' : 'bg-white/70 border-black/6'"
                         >
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-base-content/40">Platform</span>
+                                <span class="text-base-content/40">{{ t('clients.detail.platform') }}</span>
                                 <span class="font-bold text-base-content">Windows / Linux</span>
                             </div>
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-base-content/40">ID</span>
+                                <span class="text-base-content/40">{{ t('clients.detail.id') }}</span>
                                 <span class="font-mono text-xs text-base-content/60">{{ client?.id }}</span>
                             </div>
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-base-content/40">Compatibility</span>
+                                <span class="text-base-content/40">{{ t('clients.detail.compatibility') }}</span>
                                 <span class="flex items-center gap-1.5 font-bold text-emerald-500 text-xs">
-                                    <ShieldCheck class="w-3.5 h-3.5" /> Verified
+                                    <ShieldCheck class="w-3.5 h-3.5" /> {{ t('clients.detail.verified') }}
                                 </span>
                             </div>
                         </div>
