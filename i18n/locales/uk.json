@@ -159,7 +159,9 @@
             "download_loader_hint": "Немає лоадера? Завантажте його на {link}.",
             "main_page": "головній сторінці",
             "status_ok": "Працює",
-            "status_error": "Не працює"
+            "status_error": "Не працює",
+            "screenshots": "Скріншоти",
+            "no_screenshots": "Фото клієнта не знайдено"
         }
     }
 }

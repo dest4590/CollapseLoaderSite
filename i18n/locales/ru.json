@@ -175,7 +175,9 @@
             "download_loader_hint": "Нет лоадера? Скачайте его на {link}.",
             "main_page": "главной странице",
             "status_ok": "Работает",
-            "status_error": "Не работает"
+            "status_error": "Не работает",
+            "screenshots": "Скриншоты",
+            "no_screenshots": "Фото клиента не найдено"
         }
     }
 }

@@ -175,7 +175,9 @@
             "download_loader_hint": "Don't have the loader? Download it on the {link}.",
             "main_page": "main page",
             "status_ok": "Working",
-            "status_error": "Issues Reported"
+            "status_error": "Issues Reported",
+            "screenshots": "Screenshots",
+            "no_screenshots": "Client photos not found"
         }
     }
 }

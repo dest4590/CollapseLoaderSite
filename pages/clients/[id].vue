@@ -2,6 +2,50 @@
 import { Play, Download, ArrowLeft, ShieldCheck, Github, Star, Zap } from 'lucide-vue-next';
 import useClients from '~/composables/useClients';
 import { useTheme } from '~/composables/useTheme';
+import { ref } from 'vue';
+
+const loadedIndices = ref<number[]>([]);
+const failedCount = ref(0);
+
+const onImageLoad = (i: number) => {
+    if (!loadedIndices.value.includes(i)) {
+        loadedIndices.value = [...loadedIndices.value, i].sort((a, b) => a - b);
+    }
+};
+const onImageError = (e: Event, i: number) => {
+    (e.target as HTMLElement).style.display = 'none';
+    failedCount.value++;
+};
+
+const noScreenshots = computed(() => failedCount.value === 4 || (failedCount.value + loadedIndices.value.length === 4 && loadedIndices.value.length === 0));
+
+
+const lightboxOpen = ref(false);
+const lightboxPos = ref(0); 
+
+const lightboxSrc = computed(() => {
+    const idx = loadedIndices.value[lightboxPos.value];
+    if (!idx) return '';
+    return `https://huggingface.co/datasets/Collapsecdn/collapsecdn/resolve/main/photoclient/${client.value?.name}/${idx}.png`;
+});
+
+const openLightbox = (i: number) => {
+    const pos = loadedIndices.value.indexOf(i);
+    lightboxPos.value = pos >= 0 ? pos : 0;
+    lightboxOpen.value = true;
+};
+const closeLightbox = () => { lightboxOpen.value = false; };
+const prevImage = () => { if (lightboxPos.value > 0) lightboxPos.value--; };
+const nextImage = () => { if (lightboxPos.value < loadedIndices.value.length - 1) lightboxPos.value++; };
+
+if (import.meta.client) {
+    window.addEventListener('keydown', (e) => {
+        if (!lightboxOpen.value) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') prevImage();
+        if (e.key === 'ArrowRight') nextImage();
+    });
+}
 
 const route = useRoute();
 const clientId = route.params.id as string;
@@ -126,6 +170,81 @@ const launchClient = () => {
                             class="rounded-2xl p-6 border"
                             :class="isDark ? 'bg-base-100/50 border-white/6' : 'bg-white/70 border-black/6'"
                         >
+                            <h3 class="font-bold text-base-content mb-4">{{ t('clients.detail.screenshots') }}</h3>
+
+                            <div v-if="noScreenshots" class="text-center text-sm font-medium text-base-content/50 py-10 border-2 border-dashed rounded-xl" :class="isDark ? 'border-white/10' : 'border-black/10'">
+                                {{ t('clients.detail.no_screenshots') }}
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <img
+                                    v-for="i in 4"
+                                    :key="i"
+                                    :src="`https://huggingface.co/datasets/Collapsecdn/collapsecdn/resolve/main/photoclient/${client?.name}/${i}.png`"
+                                    @load="onImageLoad(i)"
+                                    @error="(e) => onImageError(e, i)"
+                                    @click="openLightbox(i)"
+                                    class="rounded-xl w-full h-auto object-cover aspect-video border cursor-zoom-in transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                                    :class="isDark ? 'border-white/10' : 'border-black/10'"
+                                    :alt="`${client?.name} screenshot ${i}`"
+                                    loading="lazy"
+                                />
+                            </div>
+                        </div>
+
+                        <Teleport to="body">
+                            <Transition name="lightbox">
+                                <div
+                                    v-if="lightboxOpen"
+                                    class="fixed inset-0 z-[9999] flex items-center justify-center"
+                                    @click.self="closeLightbox"
+                                >
+                                    <div class="absolute inset-0 bg-black/90 backdrop-blur-md" @click="closeLightbox" />
+
+                                    <div class="relative z-10 flex items-center gap-4 px-4 max-w-5xl w-full">
+                                        <button
+                                            @click="prevImage"
+                                            :disabled="lightboxPos === 0"
+                                            class="shrink-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center transition-all"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                                        </button>
+
+                                        <div class="flex-1 flex items-center justify-center">
+                                            <img
+                                                :src="lightboxSrc"
+                                                class="max-w-full max-h-[80vh] rounded-2xl shadow-2xl object-contain"
+                                                :alt="`${client?.name} screenshot ${lightboxPos + 1}`"
+                                            />
+                                        </div>
+
+                                        <button
+                                            @click="nextImage"
+                                            :disabled="lightboxPos >= loadedIndices.length - 1"
+                                            class="shrink-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center transition-all"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                                        </button>
+                                    </div>
+
+                                    <button
+                                        @click="closeLightbox"
+                                        class="absolute top-5 right-5 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+
+                                    <div class="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/60 text-sm font-medium">
+                                        {{ lightboxPos + 1 }} / {{ loadedIndices.length }}
+                                    </div>
+                                </div>
+                            </Transition>
+                        </Teleport>
+
+                        <div
+                            class="rounded-2xl p-6 border"
+                            :class="isDark ? 'bg-base-100/50 border-white/6' : 'bg-white/70 border-black/6'"
+                        >
                             <div class="flex items-center gap-3 mb-4">
                                 <ShieldCheck class="w-5 h-5 text-primary" />
                                 <h3 class="font-bold text-base-content">{{ t('clients.detail.safety') }}</h3>
@@ -206,3 +325,14 @@ const launchClient = () => {
         </div>
     </div>
 </template>
+
+<style scoped>
+.lightbox-enter-active,
+.lightbox-leave-active {
+    transition: opacity 0.25s ease;
+}
+.lightbox-enter-from,
+.lightbox-leave-to {
+    opacity: 0;
+}
+</style>
