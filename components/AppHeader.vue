@@ -2,6 +2,9 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { Github, Download, Sun, Moon } from 'lucide-vue-next';
 
+import darkLogo from '~/assets/3d_logo/3d_logo_dark.webm';
+import lightLogo from '~/assets/3d_logo/3d_logo_light.webm';
+
 const { locale, setLocale, availableLocales } = useI18n();
 const localePath = useLocalePath();
 const { isDark, toggleTheme } = useTheme();
@@ -10,6 +13,10 @@ const isHidden = ref(false);
 const mobileMenuOpen = ref(false);
 
 const props = defineProps<{ hideNav?: boolean }>();
+
+const logoSrc = computed(() => {
+    return isDark.value ? lightLogo : darkLogo;
+});
 
 const changeLanguage = (lang: string) => {
     setLocale(lang as 'en' | 'ru');
@@ -64,7 +71,15 @@ onUnmounted(() => {
                 :class="pillClass"
                 :style="{ fontFamily: '\'Kind Sans\', sans-serif', backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)' }"
             >
-                <img src="~/assets/img/collapse.svg" alt="CollapseLoader Logo" class="h-6 w-6" />
+                <video
+                    :src="logoSrc"
+                    autoplay
+                    loop
+                    muted
+                    playsinline
+                    aria-label="CollapseLoader Logo"
+                    class="h-10 w-10 rounded-md"
+                ></video>
                 {{ $t('brand') }}
             </a>
 
