@@ -164,7 +164,7 @@ export default defineNuxtConfig({
         },
     },
     routeRules: {
-        '/telegram': { redirect: 'https://t.me/CollapseLoader' },
+        '/telegram': { redirect: 'https://telegram.me/CollapseLoader' },
         '/discord': { redirect: 'https://discord.gg/FyKtnFqs6J' },
     },
     ogImage: {
