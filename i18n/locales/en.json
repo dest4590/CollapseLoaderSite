@@ -1,4 +1,9 @@
 {
+    "error": {
+        "not_found": "This page does not exist",
+        "something_wrong": "Something went wrong",
+        "home": "Home"
+    },
     "back": "Back",
     "search_clients": "Search clients",
     "launches": "launches",

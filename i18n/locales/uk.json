@@ -1,4 +1,9 @@
 {
+    "error": {
+        "not_found": "Ця сторінка не існує",
+        "something_wrong": "Щось пішло не так",
+        "home": "Головна"
+    },
     "back": "Назад",
     "search_clients": "Пошук клієнтів",
     "launches": "запусків",
