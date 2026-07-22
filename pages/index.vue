@@ -101,6 +101,15 @@ const preWindowsOptions = computed(() => {
 
 const { totalLoaderLaunches, totalClientDownloads, totalClientLaunches } = useAnalytics();
 
+const bannerChanges = ref<{ name: string; version: string; md5_hash: string }[]>([]);
+
+onMounted(async () => {
+    try {
+        const data = await $fetch('/api/clients/changes') as any;
+        bannerChanges.value = (data?.latest || []).slice(0, 3);
+    } catch {}
+});
+
 function ensureOdometer(): Promise<void> {
     return new Promise((resolve, reject) => {
         if (typeof window === 'undefined') return reject();
@@ -459,6 +468,43 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             </div>
                             <span class="download-card-cta">{{ t('download.view_source') }} →</span>
                         </a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-24 bg-base-100 relative">
+                <div class="container mx-auto px-6">
+                    <div class="max-w-4xl mx-auto text-center mb-14">
+                        <h2 class="section-title animate-on-scroll anim-fade-up">{{ t('hfapi.banner_title') }}</h2>
+                    </div>
+
+                    <div class="max-w-4xl mx-auto">
+                        <NuxtLink
+                            :to="localePath('/HFapi')"
+                            class="download-card animate-on-scroll anim-fade-up group flex-row items-center"
+                            style="--delay: 100ms"
+                        >
+                            <div class="download-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm text-base-content/50 mb-3">{{ t('hfapi.banner_desc') }}</p>
+
+                                <div v-if="bannerChanges.length" class="flex flex-wrap gap-2">
+                                    <span
+                                        v-for="(item, i) in bannerChanges"
+                                        :key="i"
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium bg-green-500/10 border-green-500/20 text-green-400"
+                                    >
+                                        + {{ item.name }}
+                                        <span class="opacity-50">{{ item.version }}</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <span class="download-card-cta">{{ t('hfapi.banner_cta') }} →</span>
+                        </NuxtLink>
                     </div>
                 </div>
             </section>
