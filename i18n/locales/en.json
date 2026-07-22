@@ -95,7 +95,7 @@
         },
         "custom_clients": {
             "title": "Custom clients",
-            "desc": "Add your own Minecraft clients — Vanilla, Fabric or Forge. Manage them alongside the built-in catalog.",
+            "desc": "Add your own Minecraft clients – Vanilla, Fabric or Forge. Manage them alongside the built-in catalog.",
             "badges": [
                 "Vanilla",
                 "Fabric",
@@ -163,7 +163,7 @@
         "forge": "Forge",
         "default": "Default",
         "banner_title": "HF API – Client Changelog",
-        "banner_desc": "Monitor new clients in real-time. Our API tracks every addition and removal across Fabric, Forge, and Default — updated every 5 minutes.",
+        "banner_desc": "Monitor new clients in real-time. Our API tracks every addition and removal across Fabric, Forge, and Default – updated every 5 minutes.",
         "banner_cta": "View Live Data",
         "banner_scan": "Latest scan",
         "banner_updates": "Updates every 5 min",

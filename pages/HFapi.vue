@@ -145,7 +145,7 @@ useSeoMeta({
                             >{{ typeLabel(client.client_type) }}</span>
                             <div class="flex-1 min-w-0">
                                 <span class="font-semibold text-base-content text-sm">{{ client.name }}</span>
-                                <span class="text-xs text-base-content/40 ml-2">{{ client.version || '—' }}</span>
+                                <span class="text-xs text-base-content/40 ml-2">{{ client.version || '–' }}</span>
                             </div>
                             <code class="text-[11px] font-mono text-base-content/30 shrink-0 hidden sm:block">{{ client.md5_hash.slice(0, 10) }}</code>
                             <span class="text-xs text-base-content/30 shrink-0">{{ formatDate(client.created_at) }}</span>
@@ -207,7 +207,7 @@ useSeoMeta({
                                 </td>
                                 <td class="py-3 pr-4">
                                     <span class="px-2 py-0.5 rounded-md text-xs font-medium" :class="isDark ? 'bg-white/5 text-base-content/60' : 'bg-black/5 text-base-content/60'">
-                                        {{ client.version || '—' }}
+                                        {{ client.version || '–' }}
                                     </span>
                                 </td>
                                 <td class="py-3 pr-4">

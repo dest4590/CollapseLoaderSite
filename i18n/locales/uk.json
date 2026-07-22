@@ -79,7 +79,7 @@
         },
         "custom_clients": {
             "title": "Кастом клієнти",
-            "desc": "Додавайте власні клієнти Minecraft — Vanilla, Fabric або Forge. Керуйте ними разом із вбудованим каталогом.",
+            "desc": "Додавайте власні клієнти Minecraft – Vanilla, Fabric або Forge. Керуйте ними разом із вбудованим каталогом.",
             "badges": [
                 "Vanilla",
                 "Fabric",
@@ -147,7 +147,7 @@
         "forge": "Forge",
         "default": "Default",
         "banner_title": "HF API – Чейнджлог клієнтів",
-        "banner_desc": "Відстежуйте нових клієнтів у реальному часі. Наш API фіксує кожне додавання та видалення серед Fabric, Forge і Default — оновлення кожні 5 хвилин.",
+        "banner_desc": "Відстежуйте нових клієнтів у реальному часі. Наш API фіксує кожне додавання та видалення серед Fabric, Forge і Default – оновлення кожні 5 хвилин.",
         "banner_cta": "Переглянути дані",
         "banner_scan": "Останнє сканування",
         "banner_updates": "Оновлення кожні 5 хв",

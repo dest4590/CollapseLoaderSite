@@ -152,7 +152,7 @@ const launchClient = () => {
                         <div class="grid grid-cols-3 gap-3">
                             <div
                                 v-for="stat in [
-                                    { label: t('clients.detail.stats.downloads'), value: clientInfo?.downloads ?? '—', icon: Download },
+                                    { label: t('clients.detail.stats.downloads'), value: clientInfo?.downloads ?? '–', icon: Download },
                                     { label: t('clients.detail.stats.version'), value: clientInfo?.version, icon: ShieldCheck },
                                     { label: t('clients.detail.stats.status'), value: clientInfo?.working ? t('clients.detail.status_ok') : t('clients.detail.status_error'), icon: Zap },
                                 ]"
