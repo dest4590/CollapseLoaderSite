@@ -18,7 +18,8 @@
         "features": "Функции",
         "safety": "Безопасность",
         "download": "Скачать",
-        "clients": "Клиенты"
+        "clients": "Клиенты",
+        "api": "HF API"
     },
     "hero": {
         "title": "CollapseLoader",

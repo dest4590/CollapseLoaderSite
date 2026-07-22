@@ -78,7 +78,7 @@ onUnmounted(() => {
                     muted
                     playsinline
                     aria-label="CollapseLoader Logo"
-                    class="h-10 w-10 rounded-md"
+                    class="h-12 w-12 rounded-md"
                 ></video>
                 {{ $t('brand') }}
             </a>
@@ -93,6 +93,7 @@ onUnmounted(() => {
                 <a href="#exclusive-features" class="nav-pill">{{ $t('nav.features') }}</a>
                 <a href="#downloads" class="nav-pill">{{ $t('nav.download') }}</a>
                 <NuxtLink :to="localePath('/clients')" class="nav-pill">{{ $t('nav.clients') }}</NuxtLink>
+                <NuxtLink :to="localePath('/HFapi')" class="nav-pill">{{ $t('nav.api') }}</NuxtLink>
                 <NuxtLink :to="localePath('/changelog')" class="nav-pill">Changelog</NuxtLink>
             </nav>
 
@@ -133,7 +134,7 @@ onUnmounted(() => {
                         aria-label="GitHub Repository"
                         class="icon-btn"
                     >
-                        <Github class="w-[18px] h-[18px]" />
+                        <Github class="w-4.5 h-4.5" />
                     </a>
 
                     <div class="w-px h-4 bg-white/10 mx-1"></div>
@@ -144,8 +145,8 @@ onUnmounted(() => {
                         :aria-label="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
                         :title="isDark ? 'Light mode' : 'Dark mode'"
                     >
-                        <Sun v-if="isDark" class="w-[18px] h-[18px]" />
-                        <Moon v-else class="w-[18px] h-[18px]" />
+                        <Sun v-if="isDark" class="w-4.5 h-4.5" />
+                        <Moon v-else class="w-4.5 h-4.5" />
                     </button>
 
                     <div class="w-px h-4 bg-white/10 mx-1"></div>
@@ -198,6 +199,7 @@ onUnmounted(() => {
                     <a href="#exclusive-features" class="mobile-nav-item" @click="mobileMenuOpen = false">{{ $t('nav.features') }}</a>
                     <a href="#downloads" class="mobile-nav-item" @click="mobileMenuOpen = false">{{ $t('nav.download') }}</a>
                     <NuxtLink :to="localePath('/clients')" class="mobile-nav-item" @click="mobileMenuOpen = false">{{ $t('nav.clients') }}</NuxtLink>
+                    <NuxtLink :to="localePath('/HFapi')" class="mobile-nav-item" @click="mobileMenuOpen = false">{{ $t('nav.api') }}</NuxtLink>
                     <NuxtLink :to="localePath('/changelog')" class="mobile-nav-item" @click="mobileMenuOpen = false">Changelog</NuxtLink>
 
                     <div class="h-px bg-white/10 my-2"></div>
@@ -215,7 +217,7 @@ onUnmounted(() => {
                                 </svg>
                             </a>
                             <a href="https://github.com/dest4590/CollapseLoader" target="_blank" rel="noopener noreferrer" aria-label="GitHub Repository" class="icon-btn">
-                                <Github class="w-[18px] h-[18px]" />
+                                <Github class="w-4.5 h-4.5" />
                             </a>
                         </div>
 
@@ -225,8 +227,8 @@ onUnmounted(() => {
                                 class="icon-btn"
                                 :aria-label="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
                             >
-                                <Sun v-if="isDark" class="w-[18px] h-[18px]" />
-                                <Moon v-else class="w-[18px] h-[18px]" />
+                                <Sun v-if="isDark" class="w-4.5 h-4.5" />
+                                <Moon v-else class="w-4.5 h-4.5" />
                             </button>
                             <div class="w-px h-4 bg-white/10 mx-1"></div>
                             <button

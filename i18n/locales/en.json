@@ -18,7 +18,8 @@
         "features": "Features",
         "safety": "Safety",
         "download": "Download",
-        "clients": "Clients"
+        "clients": "Clients",
+        "api": "HF API"
     },
     "hero": {
         "title": "CollapseLoader",

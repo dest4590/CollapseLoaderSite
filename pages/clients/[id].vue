@@ -196,7 +196,7 @@ const launchClient = () => {
                             <Transition name="lightbox">
                                 <div
                                     v-if="lightboxOpen"
-                                    class="fixed inset-0 z-[9999] flex items-center justify-center"
+                                    class="fixed inset-0 z-9999 flex items-center justify-center"
                                     @click.self="closeLightbox"
                                 >
                                     <div class="absolute inset-0 bg-black/90 backdrop-blur-md" @click="closeLightbox" />

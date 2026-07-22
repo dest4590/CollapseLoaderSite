@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowLeft, RefreshCw, Plus, Server } from 'lucide-vue-next';
+import { ArrowLeft, RefreshCw } from 'lucide-vue-next';
 
 const { t } = useI18n();
 const localePath = useLocalePath();
@@ -97,13 +97,6 @@ useSeoMeta({
                             class="text-5xl md:text-6xl font-black text-base-content tracking-tight"
                             :style="{ fontFamily: '\'Kind Sans\', sans-serif' }"
                         >HF API</h1>
-                        <span
-                            class="flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-semibold"
-                            :class="isDark ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-green-500/10 border-green-500/20 text-green-600'"
-                        >
-                            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-                            {{ t('hfapi.live') }}
-                        </span>
                     </div>
                     <p class="text-base-content/50">{{ t('hfapi.subtitle') }}</p>
                     <p v-if="lastScan" class="text-xs text-base-content/30 mt-1">
@@ -194,7 +187,7 @@ useSeoMeta({
                                 v-for="client in filteredClients"
                                 :key="client.id"
                                 class="border-t transition-colors"
-                                :class="isDark ? 'border-white/5 hover:bg-white/[0.02]' : 'border-black/5 hover:bg-black/[0.02]'"
+                                :class="isDark ? 'border-white/5 hover:bg-white/2' : 'border-black/5 hover:bg-black/2'"
                             >
                                 <td class="py-3 pr-4">
                                     <div class="flex items-center gap-2">
