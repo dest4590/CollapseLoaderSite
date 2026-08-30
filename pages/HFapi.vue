@@ -65,6 +65,13 @@ const typeLabel = (type: string) => {
     return map[type] || type;
 };
 
+const onCardMouseMove = (e: MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    target.style.setProperty('--mx', `${((e.clientX - rect.left) / rect.width) * 100}%`);
+    target.style.setProperty('--my', `${((e.clientY - rect.top) / rect.height) * 100}%`);
+};
+
 useSeoMeta({
     title: () => `HF API – CollapseLoader`,
     description: () => t('hfapi.subtitle'),
@@ -78,6 +85,8 @@ useSeoMeta({
         <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
             <div class="absolute inset-0 clients-hero-gradient opacity-50"></div>
             <div class="absolute inset-0 clients-dots opacity-30"></div>
+            <div class="absolute inset-0 hero-ken-bg opacity-25"></div>
+            <div class="absolute inset-0 hero-radial-accent pointer-events-none"></div>
         </div>
 
         <div class="max-w-5xl mx-auto relative z-10 pt-28 pb-24 px-4 sm:px-6">
@@ -131,9 +140,10 @@ useSeoMeta({
                         <div
                             v-for="(client, idx) in latestClients"
                             :key="client.md5_hash"
-                            class="flex items-center gap-4 rounded-xl p-4 border transition-all duration-200"
+                            class="hfapi-row flex items-center gap-4 rounded-xl p-4 border transition-all duration-300"
                             :class="isDark ? 'bg-base-100/50 border-white/6 hover:border-white/12' : 'bg-white/70 border-black/6 hover:border-black/10'"
-                            :style="{ animationDelay: `${idx * 40}ms` }"
+                            :style="{ '--i': idx }"
+                            @mousemove="onCardMouseMove"
                         >
                             <span
                                 class="shrink-0 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border"
@@ -193,8 +203,9 @@ useSeoMeta({
                             <tr
                                 v-for="client in filteredClients"
                                 :key="client.id"
-                                class="border-t transition-colors"
+                                class="hfapi-tr border-t transition-colors"
                                 :class="isDark ? 'border-white/5 hover:bg-white/[0.02]' : 'border-black/5 hover:bg-black/[0.02]'"
+                                :style="{ '--i': filteredClients.indexOf(client) }"
                             >
                                 <td class="py-3 pr-4">
                                     <div class="flex items-center gap-2">
@@ -246,6 +257,68 @@ useSeoMeta({
         radial-gradient(ellipse at 50% 0%, oklch(98% 0.003 247.858 / 0.1), transparent 60%),
         radial-gradient(ellipse at 0% 100%, oklch(60% 0 0 / 0.08), transparent 70%),
         radial-gradient(ellipse at 100% 100%, oklch(60% 0 0 / 0.08), transparent 70%);
+}
+
+.hfapi-row {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    opacity: 0;
+    animation: hfapi-row-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: calc(var(--i, 0) * 50ms);
+}
+
+.hfapi-row::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        400px circle at var(--mx, 50%) var(--my, 50%),
+        hsl(var(--p) / 0.18),
+        transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.hfapi-row:hover::before {
+    opacity: 1;
+}
+
+@keyframes hfapi-row-in {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.hfapi-tr {
+    opacity: 0;
+    animation: hfapi-row-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: calc(var(--i, 0) * 30ms);
+}
+
+.hero-ken-bg {
+    background:
+        radial-gradient(ellipse at 25% 30%, hsl(var(--p) / 0.5) 0%, transparent 45%),
+        radial-gradient(ellipse at 75% 70%, hsl(var(--s) / 0.4) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 50%, hsl(var(--a) / 0.3) 0%, transparent 60%);
+    filter: blur(70px) saturate(1.4);
+    animation: heroKen 30s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes heroKen {
+    0%   { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(1.1) rotate(-1.5deg); }
+}
+
+.hero-radial-accent {
+    background: radial-gradient(
+        circle at 50% 0%,
+        hsl(var(--p) / 0.15),
+        transparent 50%
+    );
 }
 
 .clients-dots {

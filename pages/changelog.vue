@@ -27,6 +27,18 @@ const shortSha = (sha: string) => sha.slice(0, 7);
 const commitTitle = (message: string) => message.split('\n')[0];
 const commitBody = (message: string) => message.split('\n').slice(1).join('\n').trim();
 
+const onCardMouseMove = (e: MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    target.style.setProperty('--mx', `${((e.clientX - rect.left) / rect.width) * 100}%`);
+    target.style.setProperty('--my', `${((e.clientY - rect.top) / rect.height) * 100}%`);
+};
+
+const heroTitleChars = computed(() => {
+    const title = typeof t('changelog.title') === 'string' ? t('changelog.title') : 'Changelog';
+    return Array.from(title);
+});
+
 useSeoMeta({
     title: () => `${t('changelog.title')} – CollapseLoader`,
     description: () => t('changelog.subtitle'),
@@ -40,6 +52,8 @@ useSeoMeta({
         <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
             <div class="absolute inset-0 clients-hero-gradient opacity-50"></div>
             <div class="absolute inset-0 clients-dots opacity-30"></div>
+            <div class="absolute inset-0 hero-ken-bg opacity-25"></div>
+            <div class="absolute inset-0 hero-radial-accent pointer-events-none"></div>
         </div>
 
         <div class="max-w-4xl mx-auto relative z-10 pt-28 pb-24 px-4 sm:px-6">
@@ -55,9 +69,16 @@ useSeoMeta({
             <div class="flex items-start justify-between gap-4 mb-10 flex-wrap">
                 <div>
                     <h1
-                        class="text-5xl md:text-6xl font-black text-base-content tracking-tight mb-2"
+                        class="text-5xl md:text-6xl font-black mb-2 tracking-tight changelog-title"
                         :style="{ fontFamily: '\'Kind Sans\', sans-serif' }"
-                    >{{ t('changelog.title') }}</h1>
+                    >
+                        <span
+                            v-for="(ch, idx) in heroTitleChars"
+                            :key="idx"
+                            class="hero-char"
+                            :style="{ '--d': (idx * 35) + 'ms' }"
+                        >{{ ch === ' ' ? ' ' : ch }}</span>
+                    </h1>
                     <p class="text-base-content/50">{{ t('changelog.subtitle') }}</p>
                 </div>
                 <button
@@ -120,7 +141,8 @@ useSeoMeta({
                         rel="noopener noreferrer"
                         class="commit-card group"
                         :class="isDark ? 'bg-base-100/50 border-white/6 hover:bg-base-100/80 hover:border-white/12' : 'bg-white/70 border-black/6 hover:bg-white hover:border-black/10'"
-                        :style="{ animationDelay: `${idx * 40}ms` }"
+                        :style="{ animationDelay: `${idx * 40}ms`, '--i': idx }"
+                        @mousemove="onCardMouseMove"
                     >
                         <div class="flex items-start gap-4">
                             <img
@@ -175,7 +197,8 @@ useSeoMeta({
                         rel="noopener noreferrer"
                         class="commit-card group"
                         :class="isDark ? 'bg-base-100/50 border-white/6 hover:bg-base-100/80 hover:border-white/12' : 'bg-white/70 border-black/6 hover:bg-white hover:border-black/10'"
-                        :style="{ animationDelay: `${idx * 40}ms` }"
+                        :style="{ animationDelay: `${idx * 40}ms`, '--i': idx }"
+                        @mousemove="onCardMouseMove"
                     >
                         <div class="flex items-start gap-4">
                             <img
@@ -220,19 +243,98 @@ useSeoMeta({
 @reference "~/assets/style.css";
 
 .commit-card {
-    @apply block rounded-xl p-4 border transition-all duration-200;
-    animation: commit-appear 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    @apply block rounded-xl p-4 border transition-all duration-300;
+    animation: commit-appear 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--i, 0) * 40ms);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.commit-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        400px circle at var(--mx, 50%) var(--my, 50%),
+        hsl(var(--p) / 0.16),
+        transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.commit-card:hover::before {
+    opacity: 1;
 }
 
 @keyframes commit-appear {
     from {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(14px);
     }
     to {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.changelog-title {
+    background: linear-gradient(110deg, hsl(var(--bc)) 0%, hsl(var(--bc)) 35%, hsl(var(--p)) 50%, hsl(var(--bc)) 65%, hsl(var(--bc)) 100%);
+    background-size: 220% 100%;
+    background-position: 0% center;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradientShiftTitle 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes gradientShiftTitle {
+    0%   { background-position: 0% center; }
+    50%  { background-position: 100% center; }
+    100% { background-position: 0% center; }
+}
+
+.hero-char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(10px) scale(0.92);
+    filter: blur(8px);
+    animation: charReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--d, 0ms);
+    will-change: opacity, transform, filter;
+}
+
+@keyframes charReveal {
+    0%   { opacity: 0; filter: blur(10px); transform: translateY(12px) scale(0.86); }
+    60%  { filter: blur(2px); }
+    100% { opacity: 1; filter: blur(0);   transform: translateY(0)    scale(1); }
+}
+
+.hero-ken-bg {
+    background:
+        radial-gradient(ellipse at 25% 30%, hsl(var(--p) / 0.5) 0%, transparent 45%),
+        radial-gradient(ellipse at 75% 70%, hsl(var(--s) / 0.4) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 50%, hsl(var(--a) / 0.3) 0%, transparent 60%);
+    filter: blur(70px) saturate(1.4);
+    animation: heroKen 30s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes heroKen {
+    0%   { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(1.1) rotate(-1.5deg); }
+}
+
+.hero-radial-accent {
+    background: radial-gradient(
+        circle at 50% 0%,
+        hsl(var(--p) / 0.15),
+        transparent 50%
+    );
 }
 </style>
 

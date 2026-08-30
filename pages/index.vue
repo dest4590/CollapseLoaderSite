@@ -25,6 +25,28 @@ const { isDark } = useTheme();
 const tiltElement = ref<HTMLElement | null>(null);
 const analyticsRef = ref<HTMLElement | null>(null);
 const isLinux = ref(false);
+const heroChars = ref<string[]>([]);
+const showcaseWrap = ref<HTMLElement | null>(null);
+const mouseGlow = ref({ x: 50, y: 50, active: false });
+
+const onMouseMoveShowcase = (e: MouseEvent) => {
+    if (!showcaseWrap.value) return;
+    const rect = showcaseWrap.value.getBoundingClientRect();
+    mouseGlow.value.x = ((e.clientX - rect.left) / rect.width) * 100;
+    mouseGlow.value.y = ((e.clientY - rect.top) / rect.height) * 100;
+    mouseGlow.value.active = true;
+};
+
+const onMouseLeaveShowcase = () => {
+    mouseGlow.value.active = false;
+};
+
+const onCardMouseMove = (e: MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    target.style.setProperty('--mx', `${((e.clientX - rect.left) / rect.width) * 100}%`);
+    target.style.setProperty('--my', `${((e.clientY - rect.top) / rect.height) * 100}%`);
+};
 
 const {
     latestReleaseUrl,
@@ -106,7 +128,7 @@ const bannerChanges = ref<{ name: string; version: string; md5_hash: string }[]>
 onMounted(async () => {
     try {
         const data = await $fetch('/api/clients/changes') as any;
-        bannerChanges.value = (data?.latest || []).slice(0, 3);
+        bannerChanges.value = (data?.latest || []).slice(0, 6);
     } catch {}
 });
 
@@ -142,6 +164,9 @@ onMounted(async () => {
     } catch (e) {
         isLinux.value = false;
     }
+
+    const heroText = (typeof t('hero.title') === 'string' ? t('hero.title') : 'CollapseLoader');
+    heroChars.value = Array.from(heroText);
 
     if (tiltElement.value) {
         VanillaTilt.init(tiltElement.value, { max: 25, speed: 400, scale: 1.02 });
@@ -205,14 +230,24 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
 
         <main class="relative z-10">
             <section ref="heroRef" class="hero min-h-screen relative overflow-hidden flex items-center pt-20">
+                <div class="hero-bg-ken absolute inset-0 z-0 opacity-[0.18] pointer-events-none">
+                    <div class="absolute inset-0 hero-ken-img"></div>
+                </div>
+                <div class="absolute inset-0 z-[1] pointer-events-none hero-overlay-bottom"></div>
+                <div class="absolute inset-0 z-[2] pointer-events-none hero-radial-accent"></div>
                 <div class="hero-content grid lg:grid-cols-2 gap-16 lg:gap-20 items-center w-full max-w-7xl mx-auto px-6 z-10 py-24 lg:py-0">
                     <div class="text-center lg:text-left space-y-6">
                         <div class="space-y-4">
                             <h1
-                                class="text-5xl md:text-7xl font-extrabold text-primary mb-4 drop-shadow-xl relative animate-slide-in-up"
+                                class="text-5xl md:text-7xl font-extrabold mb-4 drop-shadow-xl relative animate-slide-in-up hero-title"
                                 style="--stagger: 0; font-family: 'Kind Sans', sans-serif;"
                             >
-                                {{ t('hero.title') }}
+                                <span
+                                    v-for="(ch, idx) in heroChars"
+                                    :key="idx"
+                                    class="hero-char"
+                                    :style="{ '--d': (idx * 35) + 'ms' }"
+                                >{{ ch === ' ' ? ' ' : ch }}</span>
                             </h1>
                             <p
                                 class="text-xl md:text-2xl mb-4 font-semibold text-base-content animate-slide-in-up"
@@ -232,7 +267,7 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                                 <a
                                     href="#downloads"
-                                    class="btn btn-primary btn-lg shadow-xl transition-all duration-300 animate-cta-pulse group relative overflow-hidden"
+                                    class="btn btn-primary btn-lg shadow-xl transition-all duration-300 animate-cta-pulse glow-pulse-strong group relative overflow-hidden"
                                 >
                                     <span class="relative z-10 flex items-center gap-2">
                                         {{ t('hero.download') }}
@@ -266,7 +301,21 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                         </div>
                     </div>
 
-                    <div ref="tiltElement" class="showcase-wrapper relative" style="--stagger: 1">
+                    <div
+                            ref="tiltElement"
+                            class="showcase-wrapper relative hero-float-y"
+                            style="--stagger: 1"
+                            @mousemove="onMouseMoveShowcase"
+                            @mouseleave="onMouseLeaveShowcase"
+                        >
+                        <div
+                            class="showcase-mouse-glow"
+                            :class="{ 'is-active': mouseGlow.active }"
+                            :style="{
+                                '--mx': mouseGlow.x + '%',
+                                '--my': mouseGlow.y + '%',
+                            }"
+                        ></div>
                         <div class="showcase shadow-2xl hover:shadow-primary/20 group">
                             <img
                                 :src="isDark ? '/img/background-dark.png' : '/img/background-light.png'"
@@ -297,6 +346,7 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             <div
                                 class="why-card animate-on-scroll anim-fade-up"
                                 style="--delay: 200ms"
+                                @mousemove="onCardMouseMove"
                             >
                                 <div class="why-icon">
                                     <Unlock class="w-6 h-6" />
@@ -307,6 +357,7 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             <div
                                 class="why-card animate-on-scroll anim-fade-up"
                                 style="--delay: 300ms"
+                                @mousemove="onCardMouseMove"
                             >
                                 <div class="why-icon">
                                     <Zap class="w-6 h-6" />
@@ -317,6 +368,7 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             <div
                                 class="why-card animate-on-scroll anim-fade-up"
                                 style="--delay: 400ms"
+                                @mousemove="onCardMouseMove"
                             >
                                 <div class="why-icon">
                                     <ShieldCheck class="w-6 h-6" />
@@ -343,6 +395,7 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             rel="noopener noreferrer"
                             class="community-card animate-on-scroll anim-scale-in group"
                             style="--delay: 150ms"
+                            @mousemove="onCardMouseMove"
                         >
                             <div class="community-icon-wrap">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
@@ -360,6 +413,7 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             rel="noopener noreferrer"
                             class="community-card animate-on-scroll anim-scale-in group"
                             style="--delay: 250ms"
+                            @mousemove="onCardMouseMove"
                         >
                             <div class="community-icon-wrap">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
@@ -392,6 +446,7 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                         <div
                             class="download-card animate-on-scroll anim-fade-up group"
                             style="--delay: 200ms"
+                            @mousemove="onCardMouseMove"
                         >
                             <div class="download-card-icon">
                                 <Rocket class="w-7 h-7" />
@@ -422,6 +477,7 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                         <div
                             class="download-card animate-on-scroll anim-fade-up group"
                             style="--delay: 300ms"
+                            @mousemove="onCardMouseMove"
                         >
                             <div class="download-card-icon">
                                 <Download class="w-7 h-7" />
@@ -458,6 +514,7 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             rel="noopener noreferrer"
                             class="download-card animate-on-scroll anim-fade-up group"
                             style="--delay: 400ms"
+                            @mousemove="onCardMouseMove"
                         >
                             <div class="download-card-icon">
                                 <Github class="w-7 h-7" />
@@ -483,6 +540,7 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             :to="localePath('/HFapi')"
                             class="download-card animate-on-scroll anim-fade-up group flex-row items-center"
                             style="--delay: 100ms"
+                            @mousemove="onCardMouseMove"
                         >
                             <div class="download-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -492,15 +550,20 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             <div class="flex-1">
                                 <p class="text-sm text-base-content/50 mb-3">{{ t('hfapi.banner_desc') }}</p>
 
-                                <div v-if="bannerChanges.length" class="flex flex-wrap gap-2">
-                                    <span
-                                        v-for="(item, i) in bannerChanges"
-                                        :key="i"
-                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium bg-green-500/10 border-green-500/20 text-green-400"
-                                    >
-                                        + {{ item.name }}
-                                        <span class="opacity-50">{{ item.version }}</span>
-                                    </span>
+                                <div v-if="bannerChanges.length" class="marquee-mask">
+                                    <div class="marquee-track">
+                                        <template v-for="dup in 4" :key="dup">
+                                            <span
+                                                v-for="(item, i) in bannerChanges"
+                                                :key="`${dup}-${i}`"
+                                                class="marquee-item inline-flex shrink-0 items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium bg-green-500/10 border-green-500/20 text-green-400"
+                                            >
+                                                + {{ item.name }}
+                                                <span class="opacity-50">{{ item.version }}</span>
+                                            </span>
+                                            <span class="marquee-dot shrink-0 inline-block w-1 h-1 rounded-full bg-base-content/30 mx-1.5 self-center" aria-hidden="true"></span>
+                                        </template>
+                                    </div>
                                 </div>
                             </div>
                             <span class="download-card-cta">{{ t('hfapi.banner_cta') }} →</span>
@@ -577,11 +640,33 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
     perspective: 1500px;
 }
 
+.showcase-mouse-glow {
+    position: absolute;
+    inset: -20%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    background: radial-gradient(
+        600px circle at var(--mx, 50%) var(--my, 50%),
+        hsl(var(--p) / 0.28) 0%,
+        hsl(var(--s) / 0.14) 25%,
+        transparent 55%
+    );
+    filter: blur(40px);
+    z-index: -1;
+    will-change: opacity, background;
+}
+
+.showcase-mouse-glow.is-active {
+    opacity: 1;
+}
+
 .showcase {
     transform-style: preserve-3d;
     border-radius: 0.75rem;
     will-change: transform;
     position: relative;
+    transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 500ms ease;
 }
 
 .showcase-bg {
@@ -589,7 +674,13 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
     height: auto;
     display: block;
     border-radius: 0.75rem;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.4s ease, transform 8s ease-in-out;
+    animation: showcase-breathe 8s ease-in-out infinite;
+}
+
+@keyframes showcase-breathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.025); }
 }
 
 .showcase-fg {
@@ -605,6 +696,10 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
     transform: translateZ(40px) scale(1.03);
 }
 
+.showcase:hover {
+    box-shadow: 0 30px 80px -10px hsl(var(--p) / 0.4), 0 0 0 1px hsl(var(--p) / 0.2);
+}
+
 @keyframes cta-pulse {
     0% { box-shadow: 0 0 0 0 hsl(var(--p) / 0.5); }
     70% { box-shadow: 0 0 0 20px hsl(var(--p) / 0); }
@@ -614,13 +709,131 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
 .animate-cta-pulse {
     animation: cta-pulse 2.5s ease-out infinite;
     will-change: box-shadow;
+    position: relative;
+    background-size: 200% 200%;
+    background-image: linear-gradient(
+        110deg,
+        hsl(var(--p)) 0%,
+        hsl(var(--p)) 35%,
+        hsl(var(--s)) 50%,
+        hsl(var(--p)) 65%,
+        hsl(var(--p)) 100%
+    );
+    transition: background-position 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.animate-cta-pulse:hover {
+    background-position: 100% center;
+    transform: translateY(-2px) scale(1.02);
 }
 
 .btn-shine {
     @apply absolute inset-0 opacity-0 transition-opacity duration-300;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
     transform: translateX(-100%);
     will-change: transform, opacity;
+}
+
+.hero-title {
+    background: linear-gradient(110deg, hsl(var(--p)) 0%, hsl(var(--p)) 35%, hsl(var(--s)) 50%, hsl(var(--p)) 65%, hsl(var(--p)) 100%);
+    background-size: 220% 100%;
+    background-position: 0% center;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, 0.25);
+    animation: gradientShift 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    filter: drop-shadow(0 2px 14px rgba(0, 0, 0, 0.25));
+    will-change: background-position;
+}
+
+@keyframes gradientShift {
+    0%   { background-position: 0% center; }
+    50%  { background-position: 100% center; }
+    100% { background-position: 0% center; }
+}
+
+.hero-char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(8px) scale(0.92);
+    filter: blur(8px);
+    animation: charReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--d, 0ms);
+    will-change: opacity, transform, filter;
+}
+
+@keyframes charReveal {
+    0%   { opacity: 0; filter: blur(10px); transform: translateY(10px) scale(0.86); }
+    60%  { filter: blur(2px); }
+    100% { opacity: 1; filter: blur(0);   transform: translateY(0)    scale(1); }
+}
+
+.hero-bg-ken {
+    overflow: hidden;
+}
+
+.hero-ken-img {
+    position: absolute;
+    inset: -8%;
+    background-image:
+        radial-gradient(ellipse at 30% 30%, hsl(var(--p) / 0.55) 0%, transparent 45%),
+        radial-gradient(ellipse at 70% 70%, hsl(var(--s) / 0.45) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 50%, hsl(var(--a) / 0.35) 0%, transparent 60%),
+        linear-gradient(135deg, hsl(var(--p) / 0.4) 0%, hsl(var(--s) / 0.4) 50%, hsl(var(--a) / 0.4) 100%);
+    filter: blur(80px) saturate(1.4);
+    animation: kenBurns 28s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes kenBurns {
+    0%   { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(1.12) rotate(2deg); }
+}
+
+.hero-overlay-bottom {
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        transparent 55%,
+        hsl(var(--b1) / 0.55) 80%,
+        hsl(var(--b1)) 100%
+    );
+}
+
+.hero-radial-accent {
+    background: radial-gradient(
+        circle at 50% 0%,
+        hsl(var(--p) / 0.18),
+        transparent 55%
+    );
+}
+
+.hero-float-y {
+    animation: heroFloatY 6s ease-in-out infinite;
+    will-change: transform;
+}
+
+@keyframes heroFloatY {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-14px) rotate(-0.4deg); }
+}
+
+@keyframes gradientShift {
+    0%   { background-position: 0% center; }
+    50%  { background-position: 100% center; }
+    100% { background-position: 0% center; }
+}
+
+.glow-pulse-strong {
+    animation: glowPulseStrong 2.6s ease-in-out infinite;
+    will-change: box-shadow;
+}
+
+@keyframes glowPulseStrong {
+    0%, 100% { box-shadow: 0 0 0 0 hsl(var(--p) / 0.45); }
+    50%      { box-shadow: 0 0 0 16px hsl(var(--p) / 0); }
 }
 
 .btn:hover .btn-shine {
@@ -665,8 +878,30 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
 }
 
 .why-card {
-    @apply p-6 rounded-2xl border border-base-content/8 bg-base-200/50 transition-all duration-300;
-    @apply hover:border-primary/20 hover:bg-base-200/80 hover:-translate-y-1 hover:shadow-lg;
+    @apply p-6 rounded-2xl border border-base-content/8 bg-base-200/50 transition-all duration-500;
+    @apply hover:border-primary/20 hover:bg-base-200/80 hover:-translate-y-1.5 hover:shadow-xl;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.why-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        400px circle at var(--mx, 50%) var(--my, 50%),
+        hsl(var(--p) / 0.15),
+        transparent 50%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.why-card:hover::before {
+    opacity: 1;
 }
 
 .why-icon {
@@ -678,8 +913,30 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
 }
 
 .download-card {
-    @apply flex flex-col gap-5 p-8 rounded-2xl border border-base-content/8 bg-base-200/50 transition-all duration-300;
-    @apply hover:border-primary/20 hover:bg-base-200/80 hover:-translate-y-1 hover:shadow-lg;
+    @apply flex flex-col gap-5 p-8 rounded-2xl border border-base-content/8 bg-base-200/50 transition-all duration-500;
+    @apply hover:border-primary/20 hover:bg-base-200/80 hover:-translate-y-1.5 hover:shadow-xl;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.download-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        500px circle at var(--mx, 50%) var(--my, 50%),
+        hsl(var(--p) / 0.16),
+        transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.download-card:hover::before {
+    opacity: 1;
 }
 
 .download-card-icon {
@@ -698,6 +955,49 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
     @apply text-xs font-bold px-3 py-1.5 rounded-lg border border-base-content/10 text-base-content/60 hover:text-primary hover:border-primary/30 hover:bg-primary/5 transition-all duration-200;
 }
 
+.marquee-mask {
+    overflow: hidden;
+    mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 8%,
+        black 92%,
+        transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 8%,
+        black 92%,
+        transparent 100%
+    );
+}
+
+.marquee-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    will-change: transform;
+    animation: marqueeScroll 40s linear infinite;
+}
+
+.marquee-track:hover {
+    animation-play-state: paused;
+}
+
+.marquee-item {
+    margin-right: 0.5rem;
+}
+
+.marquee-dot {
+    margin-right: 0.5rem;
+}
+
+@keyframes marqueeScroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-25%); }
+}
+
 .ghost-btn {
     @apply inline-flex items-center gap-2 px-2 py-1 text-lg font-medium text-base-content/50 transition-all duration-250;
 }
@@ -708,8 +1008,30 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
 }
 
 .community-card {
-    @apply flex flex-col items-center text-center p-8 rounded-2xl border border-base-content/8 bg-base-200/60 backdrop-blur-sm transition-all duration-300;
-    @apply hover:border-primary/20 hover:bg-base-200/90 hover:shadow-xl hover:-translate-y-1;
+    @apply flex flex-col items-center text-center p-8 rounded-2xl border border-base-content/8 bg-base-200/60 backdrop-blur-sm transition-all duration-500;
+    @apply hover:border-primary/20 hover:bg-base-200/90 hover:shadow-xl hover:-translate-y-1.5;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.community-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        500px circle at var(--mx, 50%) var(--my, 50%),
+        hsl(var(--p) / 0.18),
+        transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.community-card:hover::before {
+    opacity: 1;
 }
 
 .community-icon-wrap {
@@ -789,6 +1111,22 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
         opacity: 1 !important;
         transform: none !important;
         transition: none !important;
+    }
+
+    .hero-char {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        animation: none !important;
+    }
+
+    .hero-bg-ken,
+    .hero-ken-img {
+        animation: none !important;
+    }
+
+    .hero-title {
+        animation: none !important;
     }
 
     .showcase:hover .showcase-front,
