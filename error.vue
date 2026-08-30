@@ -75,7 +75,7 @@ const is404 = statusCode === 404;
                         class="social-404"
                         aria-label="GitHub"
                     >
-                        <Github class="w-[18px] h-[18px]" />
+                        <Github class="w-4.5 h-4.5" />
                     </a>
                 </div>
             </div>

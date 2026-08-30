@@ -94,6 +94,7 @@ onUnmounted(() => {
                     <a href="#exclusive-features" class="nav-pill">{{ $t('nav.features') }}</a>
                     <a href="#downloads" class="nav-pill">{{ $t('nav.download') }}</a>
                     <NuxtLink :to="localePath('/clients')" class="nav-pill">{{ $t('nav.clients') }}</NuxtLink>
+                    <NuxtLink :to="localePath('/HFapi')" class="nav-pill">{{ $t('nav.api') }}</NuxtLink>
                     <NuxtLink :to="localePath('/changelog')" class="nav-pill">Changelog</NuxtLink>
                 </nav>
 
@@ -197,6 +198,7 @@ onUnmounted(() => {
                     <a href="#exclusive-features" class="mobile-nav-item" @click="mobileMenuOpen = false">{{ $t('nav.features') }}</a>
                     <a href="#downloads" class="mobile-nav-item" @click="mobileMenuOpen = false">{{ $t('nav.download') }}</a>
                     <NuxtLink :to="localePath('/clients')" class="mobile-nav-item" @click="mobileMenuOpen = false">{{ $t('nav.clients') }}</NuxtLink>
+                    <NuxtLink :to="localePath('/HFapi')" class="mobile-nav-item" @click="mobileMenuOpen = false">{{ $t('nav.api') }}</NuxtLink>
                     <NuxtLink :to="localePath('/changelog')" class="mobile-nav-item" @click="mobileMenuOpen = false">Changelog</NuxtLink>
 
                     <div class="h-px bg-white/10 my-2"></div>
