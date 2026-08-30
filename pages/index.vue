@@ -324,12 +324,20 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                                 :src="isDark ? '/img/background-dark.png' : '/img/background-light.png'"
                                 alt="CollapseLoader background"
                                 class="showcase-bg"
+                                loading="eager"
+                                decoding="async"
+                                width="1800"
+                                height="950"
                             />
                             <div class="showcase-fg-shadow" aria-hidden="true"></div>
                             <img
                                 :src="isDark ? '/img/foreground-dark.png' : '/img/foreground-light.png'"
                                 alt="CollapseLoader foreground"
                                 class="showcase-fg"
+                                loading="eager"
+                                decoding="async"
+                                width="1800"
+                                height="950"
                             />
                             <div class="showcase-glare" aria-hidden="true"></div>
                         </div>
@@ -641,17 +649,16 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
 
 .showcase-wrapper {
     position: relative;
-    transform-style: preserve-3d;
-    perspective: 1500px;
+    perspective: 1200px;
 }
 
 .showcase {
     border-radius: 0.75rem;
     position: relative;
-    transform-style: preserve-3d;
     transition: box-shadow 600ms ease;
-    will-change: transform;
     image-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    contain: layout style;
 }
 
 .showcase.is-hovering {
@@ -660,11 +667,12 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
         rotateY(calc(var(--px, 0) * 6deg))
         scale(1.04);
     box-shadow: 0 30px 80px -10px hsl(var(--p) / 0.4), 0 0 0 1px hsl(var(--p) / 0.2);
+    transform-origin: center center;
 }
 
 .showcase.is-resetting {
     transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 600ms ease;
-    transform: rotateX(0deg) rotateY(0deg);
+    transform: rotateX(0) rotateY(0) scale(1);
 }
 
 .showcase-bg {
@@ -672,16 +680,14 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
     height: auto;
     display: block;
     border-radius: 0.75rem;
-    transform: translateZ(0);
     transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: transform;
-    image-rendering: high-quality;
+    image-rendering: auto;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
 
 .showcase.is-hovering .showcase-bg {
-    transform: translateZ(0) scale(0.96);
+    transform: scale(0.96);
 }
 
 .showcase-fg-shadow {
@@ -698,13 +704,12 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
     );
     filter: blur(22px);
     pointer-events: none;
-    will-change: opacity, transform;
-    transform: translateZ(0) scale(0.95);
+    transform: scale(0.95);
 }
 
 .showcase.is-hovering .showcase-fg-shadow {
     opacity: 1;
-    transform: translateZ(0) scale(1.05);
+    transform: scale(1.05);
 }
 
 .showcase-fg {
@@ -713,16 +718,15 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
     width: 100%;
     height: 100%;
     object-fit: contain;
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: scale(1);
     transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: transform;
-    image-rendering: high-quality;
+    image-rendering: auto;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
 
 .showcase.is-hovering .showcase-fg {
-    transform: translate3d(0, -8px, 80px) scale(1.08);
+    transform: translateY(-8px) scale(1.08);
 }
 
 .showcase-glare {
