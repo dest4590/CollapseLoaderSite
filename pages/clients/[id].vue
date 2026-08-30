@@ -101,13 +101,30 @@ const launchClient = () => {
         window.location.href = `collapseloader://launch?client=${client.value.id}`;
     }
 };
+
+const onCardMouseMove = (e: MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    target.style.setProperty('--mx', `${((e.clientX - rect.left) / rect.width) * 100}%`);
+    target.style.setProperty('--my', `${((e.clientY - rect.top) / rect.height) * 100}%`);
+};
+
+const heroTitleChars = computed(() => {
+    const name = client.value?.name ?? '';
+    return Array.from(name);
+});
 </script>
 
 <template>
-    <div v-if="client" class="min-h-screen bg-base-200">
+    <div v-if="client" class="min-h-screen bg-base-200 relative overflow-x-hidden">
         <AppHeader hide-nav />
 
-        <div class="pt-28 pb-24 px-4 sm:px-6">
+        <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+            <div class="absolute inset-0 hero-ken-bg opacity-25"></div>
+            <div class="absolute inset-0 hero-radial-accent pointer-events-none"></div>
+        </div>
+
+        <div class="pt-28 pb-24 px-4 sm:px-6 relative z-10">
             <div class="max-w-5xl mx-auto">
 
                 <NuxtLink
@@ -141,9 +158,16 @@ const launchClient = () => {
                             </div>
 
                             <h1
-                                class="text-5xl md:text-6xl font-black text-base-content tracking-tight mb-2"
+                                class="text-5xl md:text-6xl font-black mb-2 tracking-tight client-title"
                                 :style="{ fontFamily: '\'Kind Sans\', sans-serif' }"
-                            >{{ client?.name }}</h1>
+                            >
+                                <span
+                                    v-for="(ch, idx) in heroTitleChars"
+                                    :key="idx"
+                                    class="hero-char"
+                                    :style="{ '--d': (idx * 35) + 'ms' }"
+                                >{{ ch === ' ' ? ' ' : ch }}</span>
+                            </h1>
                             <p class="text-base-content/40 text-sm">
                                 {{ t('clients.detail.description_paragraph', { version: client?.version, type: client?.client_type }) }}
                             </p>
@@ -151,14 +175,16 @@ const launchClient = () => {
 
                         <div class="grid grid-cols-3 gap-3">
                             <div
-                                v-for="stat in [
-                                    { label: t('clients.detail.stats.downloads'), value: clientInfo?.downloads ?? '–', icon: Download },
+                                v-for="(stat, sIdx) in [
+                                    { label: t('clients.detail.stats.downloads'), value: clientInfo?.downloads ?? '—', icon: Download },
                                     { label: t('clients.detail.stats.version'), value: clientInfo?.version, icon: ShieldCheck },
                                     { label: t('clients.detail.stats.status'), value: clientInfo?.working ? t('clients.detail.status_ok') : t('clients.detail.status_error'), icon: Zap },
                                 ]"
                                 :key="stat.label"
-                                class="rounded-2xl p-5 border"
+                                class="stat-card rounded-2xl p-5 border"
                                 :class="isDark ? 'bg-base-100/50 border-white/6' : 'bg-white/70 border-black/6'"
+                                :style="{ '--i': sIdx }"
+                                @mousemove="onCardMouseMove"
                             >
                                 <component :is="stat.icon" class="w-4 h-4 text-primary mb-3" />
                                 <div class="text-[10px] font-black uppercase tracking-widest text-base-content/30 mb-1">{{ stat.label }}</div>
@@ -196,7 +222,7 @@ const launchClient = () => {
                             <Transition name="lightbox">
                                 <div
                                     v-if="lightboxOpen"
-                                    class="fixed inset-0 z-9999 flex items-center justify-center"
+                                    class="fixed inset-0 z-[9999] flex items-center justify-center"
                                     @click.self="closeLightbox"
                                 >
                                     <div class="absolute inset-0 bg-black/90 backdrop-blur-md" @click="closeLightbox" />
@@ -334,5 +360,94 @@ const launchClient = () => {
 .lightbox-enter-from,
 .lightbox-leave-to {
     opacity: 0;
+}
+
+.stat-card {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    opacity: 0;
+    animation: stat-card-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: calc(var(--i, 0) * 80ms);
+}
+
+.stat-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        400px circle at var(--mx, 50%) var(--my, 50%),
+        hsl(var(--p) / 0.16),
+        transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.stat-card:hover::before {
+    opacity: 1;
+}
+
+@keyframes stat-card-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.client-title {
+    background: linear-gradient(110deg, hsl(var(--bc)) 0%, hsl(var(--bc)) 35%, hsl(var(--p)) 50%, hsl(var(--bc)) 65%, hsl(var(--bc)) 100%);
+    background-size: 220% 100%;
+    background-position: 0% center;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: clientTitleShift 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes clientTitleShift {
+    0%   { background-position: 0% center; }
+    50%  { background-position: 100% center; }
+    100% { background-position: 0% center; }
+}
+
+.hero-char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(10px) scale(0.92);
+    filter: blur(8px);
+    animation: charReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--d, 0ms);
+    will-change: opacity, transform, filter;
+}
+
+@keyframes charReveal {
+    0%   { opacity: 0; filter: blur(10px); transform: translateY(12px) scale(0.86); }
+    60%  { filter: blur(2px); }
+    100% { opacity: 1; filter: blur(0);   transform: translateY(0)    scale(1); }
+}
+
+.hero-ken-bg {
+    background:
+        radial-gradient(ellipse at 25% 30%, hsl(var(--p) / 0.5) 0%, transparent 45%),
+        radial-gradient(ellipse at 75% 70%, hsl(var(--s) / 0.4) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 50%, hsl(var(--a) / 0.3) 0%, transparent 60%);
+    filter: blur(70px) saturate(1.4);
+    animation: heroKen 30s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes heroKen {
+    0%   { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(1.1) rotate(-1.5deg); }
+}
+
+.hero-radial-accent {
+    background: radial-gradient(
+        circle at 50% 0%,
+        hsl(var(--p) / 0.15),
+        transparent 50%
+    );
 }
 </style>
