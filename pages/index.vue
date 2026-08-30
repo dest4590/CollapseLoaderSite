@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import VanillaTilt from 'vanilla-tilt';
 import { computed, onMounted, ref, watch } from 'vue';
 import {
     BarChart,
@@ -22,30 +21,44 @@ declare global {
 const { t } = useI18n();
 const localePath = useLocalePath();
 const { isDark } = useTheme();
-const tiltElement = ref<HTMLElement | null>(null);
 const analyticsRef = ref<HTMLElement | null>(null);
 const isLinux = ref(false);
 const heroChars = ref<string[]>([]);
-const showcaseWrap = ref<HTMLElement | null>(null);
-const mouseGlow = ref({ x: 50, y: 50, active: false });
-
-const onMouseMoveShowcase = (e: MouseEvent) => {
-    if (!showcaseWrap.value) return;
-    const rect = showcaseWrap.value.getBoundingClientRect();
-    mouseGlow.value.x = ((e.clientX - rect.left) / rect.width) * 100;
-    mouseGlow.value.y = ((e.clientY - rect.top) / rect.height) * 100;
-    mouseGlow.value.active = true;
-};
-
-const onMouseLeaveShowcase = () => {
-    mouseGlow.value.active = false;
-};
 
 const onCardMouseMove = (e: MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
     const rect = target.getBoundingClientRect();
     target.style.setProperty('--mx', `${((e.clientX - rect.left) / rect.width) * 100}%`);
     target.style.setProperty('--my', `${((e.clientY - rect.top) / rect.height) * 100}%`);
+};
+
+const onShowcaseMouseMove = (e: MouseEvent) => {
+    const wrap = e.currentTarget as HTMLElement;
+    const showcase = wrap.querySelector('.showcase') as HTMLElement | null;
+    if (!showcase) return;
+    const rect = showcase.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    wrap.style.setProperty('--px', `${(x - 0.5) * 2}`);
+    wrap.style.setProperty('--py', `${(y - 0.5) * 2}`);
+    showcase.classList.add('is-hovering');
+    showcase.classList.remove('is-resetting');
+};
+
+let resetTimer: ReturnType<typeof setTimeout> | null = null;
+
+const onShowcaseMouseLeave = (e: MouseEvent) => {
+    const wrap = e.currentTarget as HTMLElement;
+    const showcase = wrap.querySelector('.showcase') as HTMLElement | null;
+    if (!showcase) return;
+    wrap.style.setProperty('--px', '0');
+    wrap.style.setProperty('--py', '0');
+    showcase.classList.remove('is-hovering');
+    showcase.classList.add('is-resetting');
+    if (resetTimer) clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => {
+        showcase.classList.remove('is-resetting');
+    }, 650);
 };
 
 const {
@@ -167,10 +180,6 @@ onMounted(async () => {
 
     const heroText = (typeof t('hero.title') === 'string' ? t('hero.title') : 'CollapseLoader');
     heroChars.value = Array.from(heroText);
-
-    if (tiltElement.value) {
-        VanillaTilt.init(tiltElement.value, { max: 25, speed: 400, scale: 1.02 });
-    }
 
     try {
         await ensureOdometer();
@@ -302,31 +311,27 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                     </div>
 
                     <div
-                            ref="tiltElement"
-                            class="showcase-wrapper relative hero-float-y"
+                    <div
+                            class="showcase-wrapper relative"
                             style="--stagger: 1"
-                            @mousemove="onMouseMoveShowcase"
-                            @mouseleave="onMouseLeaveShowcase"
+                            @mousemove="onShowcaseMouseMove"
+                            @mouseleave="onShowcaseMouseLeave"
                         >
                         <div
-                            class="showcase-mouse-glow"
-                            :class="{ 'is-active': mouseGlow.active }"
-                            :style="{
-                                '--mx': mouseGlow.x + '%',
-                                '--my': mouseGlow.y + '%',
-                            }"
-                        ></div>
-                        <div class="showcase shadow-2xl hover:shadow-primary/20 group">
+                            class="showcase shadow-2xl hover:shadow-primary/20 group"
+                        >
                             <img
                                 :src="isDark ? '/img/background-dark.png' : '/img/background-light.png'"
                                 alt="CollapseLoader background"
                                 class="showcase-bg"
                             />
+                            <div class="showcase-fg-shadow" aria-hidden="true"></div>
                             <img
                                 :src="isDark ? '/img/foreground-dark.png' : '/img/foreground-light.png'"
                                 alt="CollapseLoader foreground"
                                 class="showcase-fg"
                             />
+                            <div class="showcase-glare" aria-hidden="true"></div>
                         </div>
                     </div>
                 </div>
@@ -640,33 +645,26 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
     perspective: 1500px;
 }
 
-.showcase-mouse-glow {
-    position: absolute;
-    inset: -20%;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    background: radial-gradient(
-        600px circle at var(--mx, 50%) var(--my, 50%),
-        hsl(var(--p) / 0.28) 0%,
-        hsl(var(--s) / 0.14) 25%,
-        transparent 55%
-    );
-    filter: blur(40px);
-    z-index: -1;
-    will-change: opacity, background;
-}
-
-.showcase-mouse-glow.is-active {
-    opacity: 1;
-}
-
 .showcase {
-    transform-style: preserve-3d;
     border-radius: 0.75rem;
-    will-change: transform;
     position: relative;
-    transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 500ms ease;
+    transform-style: preserve-3d;
+    transition: box-shadow 600ms ease;
+    will-change: transform;
+    image-rendering: auto;
+}
+
+.showcase.is-hovering {
+    transform:
+        rotateX(calc(var(--py, 0) * -6deg))
+        rotateY(calc(var(--px, 0) * 6deg))
+        scale(1.04);
+    box-shadow: 0 30px 80px -10px hsl(var(--p) / 0.4), 0 0 0 1px hsl(var(--p) / 0.2);
+}
+
+.showcase.is-resetting {
+    transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 600ms ease;
+    transform: rotateX(0deg) rotateY(0deg);
 }
 
 .showcase-bg {
@@ -674,13 +672,39 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
     height: auto;
     display: block;
     border-radius: 0.75rem;
-    transition: opacity 0.4s ease, transform 8s ease-in-out;
-    animation: showcase-breathe 8s ease-in-out infinite;
+    transform: translateZ(0);
+    transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+    image-rendering: high-quality;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
-@keyframes showcase-breathe {
-    0%, 100% { transform: scale(1); }
-    50%      { transform: scale(1.025); }
+.showcase.is-hovering .showcase-bg {
+    transform: translateZ(0) scale(0.96);
+}
+
+.showcase-fg-shadow {
+    position: absolute;
+    inset: 0;
+    border-radius: 0.75rem;
+    opacity: 0;
+    transition: opacity 600ms ease, transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+    background: radial-gradient(
+        ellipse at center bottom,
+        rgba(0, 0, 0, 0.7) 0%,
+        rgba(0, 0, 0, 0.4) 35%,
+        transparent 70%
+    );
+    filter: blur(22px);
+    pointer-events: none;
+    will-change: opacity, transform;
+    transform: translateZ(0) scale(0.95);
+}
+
+.showcase.is-hovering .showcase-fg-shadow {
+    opacity: 1;
+    transform: translateZ(0) scale(1.05);
 }
 
 .showcase-fg {
@@ -689,15 +713,36 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
     width: 100%;
     height: 100%;
     object-fit: contain;
-    transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease;
+    transform: translate3d(0, 0, 0) scale(1);
+    transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+    image-rendering: high-quality;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
-.showcase:hover .showcase-fg {
-    transform: translateZ(40px) scale(1.03);
+.showcase.is-hovering .showcase-fg {
+    transform: translate3d(0, -8px, 80px) scale(1.08);
 }
 
-.showcase:hover {
-    box-shadow: 0 30px 80px -10px hsl(var(--p) / 0.4), 0 0 0 1px hsl(var(--p) / 0.2);
+.showcase-glare {
+    position: absolute;
+    inset: 0;
+    border-radius: 0.75rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 600ms ease;
+    background: radial-gradient(
+        400px circle at calc((var(--px, 0) + 1) * 50%) calc((var(--py, 0) + 1) * 50%),
+        hsl(var(--p) / 0.25) 0%,
+        transparent 60%
+    );
+    mix-blend-mode: screen;
+    will-change: opacity;
+}
+
+.showcase.is-hovering .showcase-glare {
+    opacity: 1;
 }
 
 @keyframes cta-pulse {
@@ -810,17 +855,8 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
     );
 }
 
-.hero-float-y {
-    animation: heroFloatY 6s ease-in-out infinite;
-    will-change: transform;
-}
-
-@keyframes heroFloatY {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50%      { transform: translateY(-14px) rotate(-0.4deg); }
-}
-
 @keyframes gradientShift {
+    0%   { background-position: 0% center; }
     0%   { background-position: 0% center; }
     50%  { background-position: 100% center; }
     100% { background-position: 0% center; }
@@ -1137,7 +1173,8 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
 
     .btn-shine { opacity: 0 !important; animation: none !important; }
     .bg-grid-pattern, .pattern-dots { animation: none !important; }
-    .animate-cta-pulse, [data-vanilla-tilt] { transform: none !important; }
+    .animate-cta-pulse, .showcase.is-hovering, .showcase.is-hovering .showcase-fg, .showcase.is-hovering .showcase-bg, .showcase.is-resetting { transform: none !important; }
+    .showcase-glare { display: none !important; }
     .odometer { animation: none !important; transition: none !important; }
 }
 </style>
