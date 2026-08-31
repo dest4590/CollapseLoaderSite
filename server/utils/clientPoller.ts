@@ -44,14 +44,32 @@ function parseClients(data: unknown): Client[] {
     return [];
 }
 
+const REPO_INFO_URL = 'https://huggingface.co/api/datasets/Collapsecdn/collapsecdn';
+
+async function getDatasetSha(): Promise<string | null> {
+    try {
+        const info = await fetch(REPO_INFO_URL).then((r) => r.json());
+        return typeof info?.sha === 'string' ? info.sha : null;
+    } catch {
+        return null;
+    }
+}
+
 async function fetchAllClients(): Promise<Client[]> {
+    const sha = await getDatasetSha();
     const results = await Promise.all(
-        URLS.map((url) => fetch(url).then((r) => r.json()).then(parseClients).catch(() => [] as Client[])),
+        URLS.map((url) => {
+            const pinned = sha ? url.replace('/resolve/main/', `/resolve/${sha}/`) : url;
+            return fetch(pinned)
+                .then((r) => r.json())
+                .then(parseClients)
+                .catch(() => [] as Client[]);
+        }),
     );
-    const map = new Map<number, Client>();
+    const map = new Map<string, Client>();
     for (const list of results) {
         for (const client of list) {
-            map.set(client.id, client);
+            map.set(`${client.client_type}-${client.id}`, client);
         }
     }
     return Array.from(map.values());
@@ -63,7 +81,7 @@ async function runScan() {
         const now = new Date().toISOString();
         const newSnapshot: Snapshot = new Map();
         for (const c of clients) {
-            newSnapshot.set(c.id, c);
+            newSnapshot.set(`${c.client_type}-${c.id}`, c);
         }
         currentSnapshot = newSnapshot;
         lastScanTime = now;

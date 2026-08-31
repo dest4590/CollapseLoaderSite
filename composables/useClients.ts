@@ -8,6 +8,18 @@ type Client = {
     working?: boolean;
 };
 
+const SHA_URL =
+    'https://huggingface.co/api/datasets/Collapsecdn/collapsecdn';
+
+async function getDatasetSha(): Promise<string | null> {
+    try {
+        const info: any = await $fetch(SHA_URL);
+        return typeof info?.sha === 'string' ? info.sha : null;
+    } catch {
+        return null;
+    }
+}
+
 export default function useClients() {
     const vanilla = useState<Client[]>('clients_vanilla', () => []);
     const fabric = useState<Client[]>('clients_fabric', () => []);
@@ -22,15 +34,25 @@ export default function useClients() {
 
         loading.value = true;
         try {
+            const sha = await getDatasetSha();
+            const resolve = (u: string) =>
+                sha ? u.replace('/resolve/main/', `/resolve/${sha}/`) : u;
+
             const [allData, fabricData, forgeData] = await Promise.all([
                 $fetch(
-                    'https://huggingface.co/datasets/Collapsecdn/collapsecdn/resolve/main/static/clients.json',
+                    resolve(
+                        'https://huggingface.co/datasets/Collapsecdn/collapsecdn/resolve/main/static/clients.json',
+                    ),
                 ),
                 $fetch(
-                    'https://huggingface.co/datasets/Collapsecdn/collapsecdn/resolve/main/static/fabric-clients.json',
+                    resolve(
+                        'https://huggingface.co/datasets/Collapsecdn/collapsecdn/resolve/main/static/fabric-clients.json',
+                    ),
                 ),
                 $fetch(
-                    'https://huggingface.co/datasets/Collapsecdn/collapsecdn/resolve/main/static/forge-clients.json',
+                    resolve(
+                        'https://huggingface.co/datasets/Collapsecdn/collapsecdn/resolve/main/static/forge-clients.json',
+                    ),
                 ),
             ]);
 
@@ -63,10 +85,10 @@ export default function useClients() {
             fabric.value = tryParse(fabricData) as any;
             forge.value = tryParse(forgeData) as any;
 
-            const map = new Map<string | number, any>();
-            rawAll.forEach((c: any) => map.set(c.id, c));
-            fabric.value.forEach((c: any) => map.set(c.id, c));
-            forge.value.forEach((c: any) => map.set(c.id, c));
+            const map = new Map<string, any>();
+            rawAll.forEach((c: any) => map.set(`${c.client_type}-${c.id}`, c));
+            fabric.value.forEach((c: any) => map.set(`${c.client_type}-${c.id}`, c));
+            forge.value.forEach((c: any) => map.set(`${c.client_type}-${c.id}`, c));
             all.value = Array.from(map.values());
 
             const getType = (c: any) =>
