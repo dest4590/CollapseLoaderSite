@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
+import heroLogo from '~/assets/logo.svg';
 import {
     BarChart,
     ChevronRight,
@@ -248,15 +249,22 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                     <div class="text-center lg:text-left space-y-6">
                         <div class="space-y-4">
                             <h1
-                                class="text-5xl md:text-7xl font-extrabold mb-4 drop-shadow-xl relative animate-slide-in-up hero-title"
+                                class="text-5xl md:text-7xl font-extrabold mb-4 drop-shadow-xl relative animate-slide-in-up hero-title flex items-center justify-center lg:justify-start gap-4 md:gap-5 flex-wrap"
                                 style="--stagger: 0; font-family: 'Kind Sans', sans-serif;"
                             >
-                                <span
-                                    v-for="(ch, idx) in heroChars"
-                                    :key="idx"
-                                    class="hero-char"
-                                    :style="{ '--d': (idx * 35) + 'ms' }"
-                                >{{ ch === ' ' ? ' ' : ch }}</span>
+                                <img
+                                    :src="heroLogo"
+                                    alt="CollapseLoader"
+                                    class="hero-logo shrink-0"
+                                />
+                                <span class="flex">
+                                    <span
+                                        v-for="(ch, idx) in heroChars"
+                                        :key="idx"
+                                        class="hero-char"
+                                        :style="{ '--d': ((idx + 1) * 35) + 'ms' }"
+                                    >{{ ch === ' ' ? ' ' : ch }}</span>
+                                </span>
                             </h1>
                             <p
                                 class="text-xl md:text-2xl mb-4 font-semibold text-base-content animate-slide-in-up"
@@ -589,7 +597,10 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
         <footer class="footer footer-center px-4 py-8 sm:px-6 md:px-8 lg:p-10 bg-base-300 text-base-content relative">
             <div class="section-wave-divider-bottom" style="top: 0px; transform: translateY(-100%)"></div>
             <aside class="animate-on-scroll anim-fade-up text-center space-y-2 sm:space-y-3">
-                <p class="text-xl sm:text-2xl font-bold text-primary">{{ t('brand') }}</p>
+                <p class="text-xl sm:text-2xl font-bold text-primary flex items-center justify-center gap-2">
+                    <img :src="heroLogo" alt="CollapseLoader Logo" class="h-6 w-6 sm:h-7 sm:w-7 shrink-0" />
+                    {{ t('brand') }}
+                </p>
                 <p class="text-sm sm:text-base leading-relaxed max-w-md mx-auto" v-html="t('footer.desc')"></p>
                 <p class="text-xs sm:text-sm text-base-content/80">{{ t('footer.copyright') }}</p>
             </aside>
@@ -811,6 +822,29 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
     animation: charReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     animation-delay: var(--d, 0ms);
     will-change: opacity, transform, filter;
+}
+
+.hero-logo {
+    height: 1em;
+    width: auto;
+    min-width: 1em;
+    transform: scale(0.5) rotate(-20deg);
+    filter: blur(8px);
+    opacity: 0;
+    animation: logoReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+    will-change: opacity, transform, filter;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: default;
+    display: inline-block;
+}
+
+.hero-logo:hover {
+    transform: scale(1.1) rotate(-8deg);
+}
+
+@keyframes logoReveal {
+    0%   { opacity: 0; filter: blur(10px); transform: scale(0.5) rotate(-20deg); }
+    100% { opacity: 1; filter: blur(0);   transform: scale(1)    rotate(0deg); }
 }
 
 @keyframes charReveal {
