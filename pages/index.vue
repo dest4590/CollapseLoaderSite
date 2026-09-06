@@ -475,7 +475,7 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-1.5">
                                     <h3 class="text-lg font-bold text-base-content">{{ t('download.latest') }}</h3>
-                                    <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/10 text-primary">Stable</span>
+                                    <span class="inline-flex h-5 shrink-0 items-center justify-center text-[10px] leading-none font-black uppercase tracking-widest px-2 pt-px rounded-full bg-primary/10 text-primary">Stable</span>
                                 </div>
                                 <p class="text-sm text-base-content/50">{{ t('download.latest_desc') }}</p>
                             </div>
@@ -506,7 +506,7 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-1.5">
                                     <h3 class="text-lg font-bold text-base-content">Nightly</h3>
-                                    <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-base-content/8 text-base-content/50">Preview</span>
+                                    <span class="inline-flex h-5 shrink-0 items-center justify-center text-[10px] leading-none font-black uppercase tracking-widest px-2 pt-px rounded-full bg-base-content/8 text-base-content/50">Preview</span>
                                 </div>
                                 <p class="text-sm text-base-content/50">{{ t('download.nightly_desc') }}</p>
                             </div>
