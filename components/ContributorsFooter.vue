@@ -25,7 +25,7 @@
     <p class="text-xs text-base-content/45 mt-3">
       {{ $t('footer.license_prefix') }}
       <a
-        href="https://github.com/dest4590/CollapseLoader/blob/main/LICENSE"
+        href="https://github.com/dest4590/CollapseLoader?tab=GPL-3.0-1-ov-file"
         target="_blank"
         rel="noopener noreferrer"
         class="link link-hover text-base-content/60"
