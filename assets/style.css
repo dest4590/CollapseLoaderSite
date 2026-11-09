@@ -150,7 +150,7 @@ html {
 }
 
 .btn-primary:hover {
-    animation: glow-pulse 2s ease-in-out infinite;
+    filter: brightness(1.03);
 }
 
 .card {

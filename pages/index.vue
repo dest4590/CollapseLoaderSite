@@ -24,7 +24,7 @@ const localePath = useLocalePath();
 const { isDark } = useTheme();
 const analyticsRef = ref<HTMLElement | null>(null);
 const isLinux = ref(false);
-const heroChars = ref<string[]>([]);
+const heroChars = computed(() => Array.from(String(t('hero.title') || 'CollapseLoader')));
 
 const onCardMouseMove = (e: MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
@@ -179,9 +179,6 @@ onMounted(async () => {
         isLinux.value = false;
     }
 
-    const heroText = (typeof t('hero.title') === 'string' ? t('hero.title') : 'CollapseLoader');
-    heroChars.value = Array.from(heroText);
-
     try {
         await ensureOdometer();
     } catch (e) {
@@ -246,7 +243,7 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                 <div class="absolute inset-0 z-[1] pointer-events-none hero-overlay-bottom"></div>
                 <div class="absolute inset-0 z-[2] pointer-events-none hero-radial-accent"></div>
                 <div class="hero-content grid lg:grid-cols-2 gap-16 lg:gap-20 items-center w-full max-w-7xl mx-auto px-6 z-10 py-24 lg:py-0">
-                    <div class="text-center lg:text-left space-y-6">
+                    <div class="text-center lg:text-left space-y-6 lg:-translate-y-[89px]">
                         <div class="space-y-4">
                             <h1
                                 class="text-5xl md:text-7xl font-extrabold mb-4 drop-shadow-xl relative animate-slide-in-up hero-title flex items-center justify-center lg:justify-start gap-4 md:gap-5 flex-wrap"
@@ -280,51 +277,41 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
                             </p>
                         </div>
 
-                        <div class="flex flex-col gap-6 animate-slide-in-up w-fit" style="--stagger: 3">
-                            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <div class="flex flex-col gap-4 animate-slide-in-up w-full lg:w-fit" style="--stagger: 3">
+                            <div class="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                                 <a
                                     href="#downloads"
-                                    class="btn btn-primary btn-lg shadow-xl transition-all duration-300 animate-cta-pulse glow-pulse-strong group relative overflow-hidden"
+                                    class="hero-btn hero-btn-primary h-12 w-full sm:w-[10rem]"
                                 >
-                                    <span class="relative z-10 flex items-center gap-2">
-                                        {{ t('hero.download') }}
-                                        <ChevronRight class="h-6 w-6 group-hover:translate-x-1 transition-transform" />
-                                    </span>
-                                    <div class="btn-shine"></div>
+                                    <Download class="h-[18px] w-[18px] shrink-0" />
+                                    <span class="truncate">{{ t('hero.download') }}</span>
                                 </a>
                                 <a
                                     href="https://github.com/dest4590/CollapseLoader"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="ghost-btn"
+                                    class="hero-btn hero-btn-secondary h-12 w-full sm:w-[10rem]"
                                 >
-                                    <span class="flex items-center gap-2">
-                                        {{ t('hero.source') }}
-                                        <Github class="h-5 w-5" />
-                                    </span>
+                                    <Github class="h-[18px] w-[18px] shrink-0" />
+                                    <span class="truncate">{{ t('hero.source') }}</span>
                                 </a>
                             </div>
-                            <div class="flex justify-center">
-                                <NuxtLink
-                                    :to="localePath('/clients')"
-                                    class="ghost-btn"
-                                >
-                                    <span class="flex items-center gap-2">
-                                        {{ t('hero.clients') }}
-                                        <Pyramid class="h-5 w-5" />
-                                    </span>
-                                </NuxtLink>
-                            </div>
+                            <NuxtLink
+                                :to="localePath('/clients')"
+                                class="hero-btn hero-btn-tertiary self-center lg:self-start"
+                            >
+                                <Pyramid class="h-[18px] w-[18px]" />
+                                <span>{{ t('hero.clients') }}</span>
+                            </NuxtLink>
                         </div>
                     </div>
 
                     <div
-                    <div
-                            class="showcase-wrapper relative"
-                            style="--stagger: 1"
-                            @mousemove="onShowcaseMouseMove"
-                            @mouseleave="onShowcaseMouseLeave"
-                        >
+                        class="showcase-wrapper relative"
+                        style="--stagger: 1"
+                        @mousemove="onShowcaseMouseMove"
+                        @mouseleave="onShowcaseMouseLeave"
+                    >
                         <div
                             class="showcase shadow-2xl hover:shadow-primary/20 group"
                         >
@@ -1072,13 +1059,38 @@ watch(totalClientLaunches, (val) => { if (launchesOdometer.value) launchesOdomet
     100% { transform: translateX(-25%); }
 }
 
-.ghost-btn {
-    @apply inline-flex items-center gap-2 px-2 py-1 text-lg font-medium text-base-content/50 transition-all duration-250;
+.hero-btn {
+    @apply inline-flex items-center justify-center gap-2 h-12 px-4 rounded-xl text-sm font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-200;
 }
 
-.ghost-btn:hover {
-    @apply text-base-content;
-    transform: translateY(-2px);
+.hero-btn:focus-visible {
+    @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-base-100;
+}
+
+.hero-btn-primary {
+    @apply bg-primary text-primary-content border border-primary/20;
+}
+
+.hero-btn-primary:hover {
+    @apply bg-primary/90;
+}
+
+.hero-btn-secondary {
+    @apply bg-base-content/5 text-base-content border border-base-content/10;
+    backdrop-filter: blur(60px) saturate(1.5);
+    -webkit-backdrop-filter: blur(60px) saturate(1.5);
+}
+
+.hero-btn-secondary:hover {
+    @apply bg-base-content/8 border-base-content/15;
+}
+
+.hero-btn-tertiary {
+    @apply h-10 px-4 text-sm font-medium text-base-content/70 bg-transparent border border-transparent;
+}
+
+.hero-btn-tertiary:hover {
+    @apply text-base-content bg-base-content/5 border-base-content/8;
 }
 
 .community-card {

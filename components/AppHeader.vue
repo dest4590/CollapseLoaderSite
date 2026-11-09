@@ -257,17 +257,19 @@ onUnmounted(() => {
 @reference "../assets/style.css";
 
 .navbar-wrapper {
-    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    will-change: opacity, transform;
 }
 
 .navbar-visible {
     opacity: 1;
+    transform: translateY(0);
     pointer-events: none;
 }
 
 .navbar-hidden {
     opacity: 0;
+    transform: translateY(-8px);
     pointer-events: none !important;
 }
 
