@@ -114,12 +114,13 @@
     },
     "footer": {
         "desc": "Відкритий лоадер для клієнтів Minecraft.",
-        "copyright": "© 2026 CollapseLoader. Всі права захищені.",
+        "copyright": "© 2026 CollapseLoader. Усі права захищено.",
         "issues": "Повідомити про проблему",
         "discord": "Discord",
         "telegram": "Telegram",
         "not_affiliated": "Не пов'язано з Mojang або Microsoft.",
-        "thank": "Дякуємо всім контриб’юторам!"
+        "thank": "Дякуємо всім контриб’юторам!",
+        "license_prefix": "CollapseLoader поширюється за ліцензією"
     },
     "changelog": {
         "title": "Чейнджлог",

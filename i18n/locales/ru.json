@@ -135,7 +135,8 @@
         "discord": "Discord",
         "telegram": "Telegram",
         "not_affiliated": "Не связано с Mojang или Microsoft.",
-        "thank": "Спасибо всем контрибьюторам!"
+        "thank": "Спасибо всем контрибьюторам!",
+        "license_prefix": "CollapseLoader распространяется по лицензии"
     },
     "changelog": {
         "title": "Чейнджлог",

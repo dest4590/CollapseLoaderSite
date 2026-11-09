@@ -19,9 +19,18 @@
         </a>
       </template>
       <template v-else>
-                <span class="text-sm text-base-content/50">Loading…</span>
+        <span class="text-sm text-base-content/50">Loading…</span>
       </template>
     </div>
+    <p class="text-xs text-base-content/45 mt-3">
+      {{ $t('footer.license_prefix') }}
+      <a
+        href="https://github.com/dest4590/CollapseLoader/blob/main/LICENSE"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="link link-hover text-base-content/60"
+      >GPL-3.0</a>
+    </p>
   </div>
 </template>
 
